@@ -1,0 +1,13 @@
+
+<div class="form-outline mb-4 {% if field.errors %} is-invalid {% endif %}">
+    <input type="{{ field_type }}" name="{{ field.name }}" id="{{ field.auto_id }}"
+           class="form-control form-control-lg {% if field.errors %}is-invalid{% endif %}"
+            value="{% if field_remain %}{{ field.value|default:'' }}{% else %}{% endif %}"
+           required>
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field_label }}</label>
+</div>
+<ul class="text-danger text-sm">
+    {% for error in field.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>

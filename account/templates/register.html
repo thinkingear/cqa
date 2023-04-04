@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="vh-100" style="background-color: #508bfc;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
+
+                            <h3 class="mb-5">Sign up</h3>
+
+                            <form method="post" action="{% url 'account:register' %}">
+                                {% csrf_token %}
+                                {% include 'components/account_input.html' with field=form.email field_type='email' field_label='Email' field_remain=True  %}
+                                {% include 'components/account_input.html' with field=form.username field_type='text' field_label='Username' field_remain=True  %}
+                                {% include 'components/account_input.html' with field=form.password1 field_type='password' field_label='Password' field_remain=False  %}
+                                {% include 'components/account_input.html' with field=form.password2 field_type='password' field_label='Confirm Password' field_remain=False  %}
+                                <button class="btn btn-primary btn-lg btn-block" type="submit">Sign Up</button>
+                            </form>
+
+
+                            <div class="mt-5">
+                                <p class="mb-0">Already have an account? <a href="{% url 'account:register' %}"
+                                                                            class="text-blue-50 fw-bold">Sign
+                                    In</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

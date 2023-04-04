@@ -37,13 +37,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
 
     'core.apps.CoreConfig',
+    'account.apps.AccountConfig',
+    'qa.apps.QaConfig',
+    'course.apps.CourseConfig',
+    'comment.apps.CommentConfig',
+    'chat.apps.ChatConfig',
+    'pubedit.apps.PubeditConfig',
+
+    'corsheaders',
+    'django_bootstrap5',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -128,6 +140,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
+    BASE_DIR / "static",
     BASE_DIR / "core/static",
 ]
 
@@ -139,3 +152,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors headers allow after adding cors app
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+EMAIL_BACKEND_PATH = 'account.backends.EmailBackend'
+AUTHENTICATION_BACKENDS = [
+    EMAIL_BACKEND_PATH,  # Replace 'your_app_name' with your actual app name
+    'django.contrib.auth.backends.ModelBackend',
+]
+
