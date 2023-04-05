@@ -2,38 +2,48 @@
 <!-- Navbar-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid justify-content-between">
-        <!-- Left elements -->
-        <div class="d-flex align-items-center">
-            <!-- Brand -->
-            <a class="navbar-brand ms-3 me-2 mb-1 d-flex align-items-center" href="{% url 'core:home' %}">CQA</a>
 
-            <!-- Search form -->
-            <div class="ms-3 d-flex input-group w-auto">
-                <div class="form-outline">
-                    <input type="search" id="form1" class="form-control" style="width: 400px"/>
-                    <label class="form-label" for="form1">Search</label>
-                </div>
-                <button type="button" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
+        <!-- Left elements -->
+
+        <!-- Brand -->
+        <a class="navbar-brand ms-5 me-2 d-flex align-items-center" href="{% url 'core:home' %}">
+            <h2 class="text-primary">CQA</h2>
+        </a>
+
         <!-- Left elements -->
 
         <!-- Center elements -->
-
+        <div class="d-flex align-items-center ms-5">
+            <!-- Search form -->
+            <form class="ms-3 d-flex input-group w-auto"
+                method="get" action="{% url 'search:search' %}">
+                <div class="form-outline">
+                    <input type="search" name="q" id="form1" class="form-control" style="width: 400px" value="{% if search_query %}{{ search_query }}{% else %}{% endif %}"/>
+                    <label class="form-label" for="form1">Search</label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
         <!-- Center elements -->
 
         <!-- Right elements -->
-        <ul class="navbar-nav flex-row">
-            <li class="nav-item me-3 me-lg-1">
-                <ul class="navbar-nav flex-row d-none d-md-flex">
-                    <li class="nav-item me-3 me-lg-1 active">
-                        <a class="nav-link" href="{% url 'core:home' %}">
-                            <span>Home</span>
-                        </a>
-                    </li>
-                </ul>
+        <ul class="navbar-nav flex-row me-5">
+            {#            <li class="nav-item me-3 me-lg-1">#}
+            {#                <ul class="navbar-nav flex-row d-none d-md-flex">#}
+            {#                    <li class="nav-item me-3 me-lg-1 active">#}
+            {#                        <a class="nav-link" href="{% url 'core:home' %}">#}
+            {#                            <span>Home</span>#}
+            {#                        </a>#}
+            {#                    </li>#}
+            {#                </ul>#}
+            {#            </li>#}
+
+            <li class="nav-item me-3 me-lg-1 active">
+                <a class="nav-link" href="{% url 'core:home' %}">
+                    <span><i class="fas fa-home fa-lg"></i></span>
+                </a>
             </li>
 
             <li class="nav-item ms-3 me-3 me-lg-1">
@@ -42,37 +52,9 @@
                 </a>
             </li>
 
-            {#            <li class="nav-item me-3 me-lg-1">#}
-            {##}
-            {#                {% if request.user.is_authenticated %}#}
-            {#                    <a class="nav-link d-sm-flex align-items-sm-center" href="#">#}
-            {#                        <img#}
-            {#                                src="{% static 'account/images/default_avatar.svg' %}"#}
-            {#                                class="rounded-circle"#}
-            {#                                height="22"#}
-            {#                                alt="Black and White Portrait of a Man"#}
-            {#                                loading="lazy"#}
-            {#                        />#}
-            {#                        <strong class="d-none d-sm-block ms-1">{{ request.user }}</strong>#}
-            {#                    </a>#}
-            {#                {% else %}#}
-            {#                    <a class="nav-link d-sm-flex align-items-sm-center" href="{% url 'account:login' %}">#}
-            {#                        <img#}
-            {#                                src="{% static 'account/images/default_avatar.svg' %}"#}
-            {#                                class="rounded-circle"#}
-            {#                                height="22"#}
-            {#                                alt="Black and White Portrait of a Man"#}
-            {#                                loading="lazy"#}
-            {#                        />#}
-            {#                        <strong class="d-none d-sm-block ms-1">Login</strong>#}
-            {#                    </a>#}
-            {#                {% endif %}#}
-            {#            </li>#}
-            {#        #}
 
-
-                {% if request.user.is_authenticated %}
-            <li class="nav-item dropdown ms-3 me-3">
+            {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown ms-3 me-3">
 
                     <a
                             class="nav-link dropdown-toggle d-flex align-items-center"
@@ -99,32 +81,63 @@
                         <li>
                             <a class="dropdown-item" href="#">Settings</a>
                         </li>
+                        <hr>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'account:register' %}">Sign Up</a>
+                        </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a>
                         </li>
                     </ul>
-                                </li>
+                </li>
 
-                {% else %}
+            {% else %}
+                <a
+                        class="nav-link d-flex align-items-center ms-3 me-3"
+                        href="{% url 'account:login' %}"
+                        id="navbarDropdownMenuLink"
+                        role="button"
+                        aria-expanded="false"
+                >
+                    {% load static %}
+                    <img
+                            src="{% static 'account/images/default_avatar.jpg' %}"
+                            class="rounded-circle"
+                            height="22"
+                            alt="Portrait of a Woman"
+                            loading="lazy"
+                    />
+                    <strong class="d-none d-sm-block ms-1">Login</strong>
+                </a>
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+                <!-- add question or article -->
+                <div class="btn-group nav-item me-3 me-lg-1" role="group">
                     <a
-                            class="nav-link d-flex align-items-center ms-3 me-3"
-                            href="{% url 'account:login' %}"
-                            id="navbarDropdownMenuLink"
-                            role="button"
+                            id="btnGroupVerticalDrop1"
+                            type="button"
+                            class="btn btn-primary text-center"
+                            aria-expanded="false"
+                            href="{% url 'qa:question_create' %}"
+                    >
+                        <strong>Add question</strong>
+                    </a>
+
+                    <button
+                            id="btnGroupVerticalDrop2"
+                            type="button"
+                            class="btn btn-dark dropdown-toggle"
+                            data-mdb-toggle="dropdown"
                             aria-expanded="false"
                     >
-                        {% load static %}
-                        <img
-                                src="{% static 'account/images/default_avatar.jpg' %}"
-                                class="rounded-circle"
-                                height="22"
-                                alt="Portrait of a Woman"
-                                loading="lazy"
-                        />
-                        <strong class="d-none d-sm-block ms-1">Login</strong>
-                    </a>
-                {% endif %}
 
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1">
+                        <li><a class="dropdown-item" href="#">Create post</a></li>
+                    </ul>
+                </div>
+            {% endif %}
         </ul>
         <!-- Right elements -->
     </div>

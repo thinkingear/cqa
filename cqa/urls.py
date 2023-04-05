@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('tinymce/', include('tinymce.urls')),
 
     # core
     path('', include('core.urls')),
@@ -29,6 +30,10 @@ urlpatterns = [
 
 
     # qa
+    path('qa/', include('qa.urls')),
+
+    # search
+    path('search/', include('search.urls'))
 
     # course
 

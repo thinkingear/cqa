@@ -9,6 +9,6 @@ pytz
 sqlparse
 toml
 markdown
-django-bootstrap5
-django-widget-tweaks
+django-tinymce
+
 

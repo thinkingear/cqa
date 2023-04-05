@@ -24,11 +24,11 @@ def register_page(request):
         else:
             # register: form is not valid
             # print(form.errors)
-            return render(request, 'register.html', {'form': form})
+            return render(request, 'account/register.html', {'form': form})
     else:
         form = RegistrationForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'account/register.html', {'form': form})
 
 
 def login_page(request):
@@ -62,7 +62,7 @@ def login_page(request):
 
     print(form.errors)
     context = {'form': form}
-    return render(request, 'login.html', context)
+    return render(request, 'account/login.html', context)
 
 
 def logout_page(request):

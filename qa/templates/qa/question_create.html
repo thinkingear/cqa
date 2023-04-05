@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    {% load static %}
+    <section class="vh-100" style="background-color: #508bfc;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-8 col-xl-8">
+                    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                        <form class="card-body p-5 text-center"
+                        method="post" action="{% url 'qa:question_create' %}">
+                            {% csrf_token %}
+                            <!-- Title -->
+                            <h3 class="mb-5">Add Question</h3>
+                            <!-- Add question Info -->
+                            {#                            <div class="card text-body mb-3 mx-auto" style="max-width: 75%; background-color: #ebf0ff;">#}
+
+                            <div class="card text-body mb-3 mx-auto"
+                                 style="max-width: 75%; background-color: #ebf0ff;">
+                                <div class="card-body" style="color: #2e69ff;">
+                                    <h5 class="card-title">Tips on getting good answers quickly</h5>
+                                    <ul class="text-start">
+                                        <li class="card-text">
+                                            Make sure your question has not been asked already
+                                        </li>
+                                        <li class="card-text">
+                                            Keep your question short and to the point
+                                        </li>
+                                        <li class="card-text">
+                                            Double-check grammar and spelling
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <link href="{% static 'qa/css/question_create.css' %}" rel="stylesheet">
+                            <!-- Add question input -->
+                            <div class="qustion-input mt-5">
+                                <input type="text" name='title' class="form-control custom-input" id="customInput"
+                                       placeholder='Start your question with "What", "How", "Why", etc.'>
+                                <label for="customInput"></label>
+                            </div>
+                            <!-- Add question buttons -->
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <a type="button" class="btn btn-light btn-rounded" href="{% url 'core:home' %}">Cancel</a>
+                                    <button type="submit" id="question_create_confirm" class="btn btn-primary btn-rounded" disabled>Add question</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script
+            type="text/javascript"
+            src="{% static 'qa/js/question_create.js' %}"
+    ></script>
+{% endblock %}

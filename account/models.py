@@ -6,9 +6,8 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(unique=True, null=False)
-    bio = models.TextField(null=True)
     avatar = models.ImageField(null=True, default="default_avatar.svg")
-    username = models.CharField(max_length=128, )
+    username = models.CharField(max_length=128, blank=False, null=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -30,5 +29,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(null=True, blank=True)
+    decription = models.TextField(null=True, blank=True)
 
 

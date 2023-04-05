@@ -9,5 +9,5 @@ from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
 def home_page(request):
-    return render(request, 'base.html')
+    return render(request, 'core/home.html')
 

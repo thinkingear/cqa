@@ -1,0 +1,15 @@
+.custom-input {
+  border: none;
+  border-bottom: 1px solid #000;
+  border-radius: 0;
+  transition: border-color 0.3s ease;
+}
+
+.custom-input:focus {
+  box-shadow: none;
+}
+
+.custom-input:hover {
+  border-color: #508bfc;
+  transition: border-color 0.3s ease;
+}
