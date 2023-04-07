@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'course.apps.CourseConfig',
     'comment.apps.CommentConfig',
     'chat.apps.ChatConfig',
-    'pubedit.apps.PubeditConfig',
+    'post.apps.PubeditConfig',
     'search.apps.SearchConfig',
     'tinymce',
 

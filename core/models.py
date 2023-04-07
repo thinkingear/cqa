@@ -10,3 +10,11 @@ class Content(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ContentVote(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    vote = models.IntegerField()
+
+    class Meta:
+        abstract = True

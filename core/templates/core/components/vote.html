@@ -17,12 +17,32 @@
 <script>
     const {{ content_type }}content_type = "{{ content_type }}"
     const {{ content_type }}content_id = {{ content.id }}
-    const {{ content_type }}user_id = {{ request.user.id }}
+    const {{ content_type }}user_id = {{ user.id }}
 
     {{ content_type }}vote_state = {
         upvoted: false,
         downvoted: false
     };
+
+
+    service.get('/vote/', {
+        params: {
+            content_type: {{ content_type }}content_type,
+            content_id: {{ content_type }}content_id,
+            user_id: {{ content_type }}user_id,
+        }
+    }).then((response) => {
+        vote = response.data.vote
+        if (vote === 1) {
+            {{ content_type }}vote_state.upvoted = true
+        } else if (vote === -1) {
+            {{ content_type }}vote_state.downvoted = true
+        } else {
+        }
+
+    }).catch((error) => {
+    }).finally(() => {
+    });
 
     const {{ content_type }}voteNumButton = document.getElementById('{{ content_type }}-vote-num')
     const {{ content_type }}upvoteButton = document.getElementById('{{ content_type }}-upvote-button');

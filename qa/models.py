@@ -1,9 +1,8 @@
 from django.db import models
 from account.models import User
-from core.models import Content
+from core.models import Content, ContentVote
 from tinymce.models import HTMLField
 from django.db.models import Sum
-
 # Create your models here.
 
 
@@ -17,6 +16,11 @@ class Question(Content):
     def __str__(self):
         return self.title
 
+    @property
+    def sum(self):
+        total_votes = QuestionVote.objects.filter(question=self).aggregate(sum_of_votes=Sum('vote'))
+        return total_votes['sum_of_votes']
+
 
 class Answer(Content):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
@@ -25,35 +29,26 @@ class Answer(Content):
     def __str__(self):
         return self.feed[:50]
 
+    @property
     def sum(self):
         total_votes = AnswerVote.objects.filter(answer=self).aggregate(sum_of_votes=Sum('vote'))
         return total_votes['sum_of_votes']
 
 
-
-class ContentVote(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    vote = models.IntegerField()
-
-    class Meta:
-        abstract = True
-
 class QuestionVote(ContentVote):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    vote = models.IntegerField()
 
     class Meta:
-        db_table = 'question_vote'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'question'], name='question_vote')
+        ]
+
 
 
 class AnswerVote(ContentVote):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    vote = models.IntegerField()
 
     class Meta:
-        db_table = 'answer_vote'
         constraints = [
-            models.UniqueConstraint(fields=['user', 'answer'], name='unique_vote')
+            models.UniqueConstraint(fields=['user', 'answer'], name='answer_vote')
         ]

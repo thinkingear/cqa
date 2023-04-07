@@ -22,6 +22,15 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
             rel="stylesheet"
     />
+    <!-- Axios library -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Axios instance -->
+    <script>
+        const service = axios.create({
+            baseURL: 'http://localhost:8080',
+            timeout: 10000,
+        });
+    </script>
 
 </head>
 <body>
@@ -32,8 +41,7 @@
 
 {% endblock %}
     <!-- JavaScript -->
-    <!-- Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- MDB -->
     <script
             type="text/javascript"
@@ -45,12 +53,6 @@ https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js
     <script src="{% static 'tinymce/tinymce.min.js' %}">
     </script>
     <script>
-        const service = axios.create({
-            baseURL: 'http://localhost:8080',
-            timeout: 10000,
-
-        });
-
         // tinymce
         tinymce.init({
             selector: 'textarea'

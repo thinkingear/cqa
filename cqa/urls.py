@@ -33,7 +33,7 @@ urlpatterns = [
     path('qa/', include('qa.urls')),
 
     # search
-    path('search/', include('search.urls'))
+    path('search/', include('search.urls')),
 
     # course
 
@@ -41,7 +41,7 @@ urlpatterns = [
     # chat
 
 
-    # pubedit
-
+    # post
+    path('post/', include('post.urls'))
 
 ]
