@@ -31,3 +31,10 @@ def answer_create_page(request, pk):
     context = {'question': question, 'form': form}
     return render(request, 'qa/answer_create.html', context)
 
+
+def question_detial(request, pk):
+    question = Question.objects.get(id=pk)
+    answers = question.answers.all()
+    context = {'question': question, 'answers': answers}
+    return render(request, 'qa/question.html', context)
+

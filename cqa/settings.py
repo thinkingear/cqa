@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-9p7#3-c7_-2s!)a5@eefqodk5591zq+izg#*ed6&9=gzi7xvcv
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -54,10 +52,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-
     'corsheaders.middleware.CorsMiddleware',
-
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cqa.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -104,7 +99,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -124,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -135,7 +128,6 @@ TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -154,6 +146,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors headers allow after adding cors app
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8080",
+#     "http://127.0.0.1:8080",
+# ]
 
 EMAIL_BACKEND_PATH = 'account.backends.EmailBackend'
 AUTHENTICATION_BACKENDS = [
@@ -161,18 +160,17 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-
 TINYMCE_DEFAULT_CONFIG = {
     "height": "320px",
     "width": "960px",
     "menubar": "file edit view insert format tools table help",
     "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code "
-    "fullscreen insertdatetime media table paste code help wordcount spellchecker",
+               "fullscreen insertdatetime media table paste code help wordcount spellchecker",
     "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
-    "aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor "
-    "backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | "
-    "fullscreen  preview save print | insertfile image media pageembed template link anchor codesample | "
-    "a11ycheck ltr rtl | showcomments addcomment code",
+               "aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor "
+               "backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | "
+               "fullscreen  preview save print | insertfile image media pageembed template link anchor codesample | "
+               "a11ycheck ltr rtl | showcomments addcomment code",
     "custom_undo_redo_levels": 10,
     "language": "es_ES",  # To force a specific language instead of the Django current language.
 }

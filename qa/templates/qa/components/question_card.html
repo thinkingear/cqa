@@ -1,10 +1,14 @@
 <div class="card">
+    <!-- question title -->
     <div class="row">
-        <h3>{{ question.title }}</h3>
+        <a href="{% url 'qa:question_detail' question.id %}"><h3>{{ question.title }}</h3></a>
     </div>
+    <!-- qustion details -->
     <div class="row mt-1" style="color: #939598">
-        <span><strong>{{ question.answers.all.count }} answers</strong> · updated {{ question.updated | timesince }}</span>
+        <span><strong>{{ question.answers.all.count }} answers</strong> · updated {{ question.updated | timesince }} ago</span>
     </div>
+
+    <!-- question toggle button -->
     <div class="row my-2">
         <div class="col-md-9">
             <a type="button" class="btn btn-outline-secondary btn-rounded" data-mdb-ripple-color="dark" href="{% url 'qa:answer_create' question.id %}">
@@ -15,6 +19,8 @@
                 <i class="fa-solid fa-wifi fa-rotate-90"></i>
                 Follow · {{ question.followers.all.count }}
             </button>
+            {% include 'core/components/vote.html' with content=question user=request.user content_type="question" %}
+
 
         </div>
         <div class="col-md-3"></div>

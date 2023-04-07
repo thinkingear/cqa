@@ -5,5 +5,6 @@ app_name = 'core'
 
 urlpatterns = [
     path('', views.home_page, name='home'),
+    path('vote/', views.vote_api, name='vote')
 ]
 

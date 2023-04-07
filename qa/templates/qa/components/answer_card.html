@@ -1,0 +1,51 @@
+{% load static %}
+<div class="card">
+    <!-- answer detail -->
+    <div class="row">
+        <!-- avatar -->
+        <div class="col-md-1">
+            <img
+                    src="{% static 'account/images/default_avatar.jpg' %}"
+                    class="rounded-circle"
+                    height="45"
+                    alt="default avatar"
+                    loading="lazy"
+            />
+        </div>
+        <div class="col-md-11">
+            <!-- username | Follow -->
+            <div class="d-flex align-items-center">
+                <a href="#"><strong>@{{ answer.poster.username }}</strong></a>
+                {% if request.user != answer.poster %}
+                    <span class="mx-1">·</span>
+                    <a href="#">Follow</a>
+                {% endif %}
+            </div>
+
+            <!-- bio | updated -->
+            <div class="row mt-2">
+                <div style="color: #939598">
+                    <span>
+                        {% if question.user.bio %}
+                            {{ question.user.bio }} ·
+                        {% endif %}
+                        updated {{ answer.updated | timesince }} ago
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- answer content -->
+    <div class="my-2">
+        <div class="d-flex align-items-center justify-content-center">
+            {{ answer.feed|safe }}
+        </div>
+        <!-- answer toggle buttons -->
+        <hr>
+        {% include 'core/components/vote.html' with content=answer user=request.user content_type="answer"%}
+    </div>
+
+</div>
