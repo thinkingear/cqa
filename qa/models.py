@@ -40,9 +40,8 @@ class QuestionVote(ContentVote):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'question'], name='question_vote')
+            models.UniqueConstraint(fields=['voter', 'question'], name='question_voter')
         ]
-
 
 
 class AnswerVote(ContentVote):
@@ -50,5 +49,5 @@ class AnswerVote(ContentVote):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'answer'], name='answer_vote')
+            models.UniqueConstraint(fields=['voter', 'answer'], name='answer_voter')
         ]

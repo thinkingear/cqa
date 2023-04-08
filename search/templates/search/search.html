@@ -9,7 +9,8 @@
         <div class="col-md-6">
             {% for content in contents %}
                 <div class="row mt-3">
-                    {% include 'qa/components/question_card.html' with question=content %}
+{#                    {% include 'qa/components/question_card.html' with question=content %}#}
+                    {% include 'pubedit/article_card.html' with article=content request=request %}
                 </div>
             {% endfor %}
         </div>

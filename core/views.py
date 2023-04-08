@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from qa.models import AnswerVote, QuestionVote, Answer, Question
 from account.models import User
+from pubedit.models import Article, ArticleVote
 
 
 # Create your views here.
@@ -20,12 +21,12 @@ def home_page(request):
 @csrf_exempt
 def vote_api(request):
     if request.method == 'GET':
-        user_id = request.GET.get('user_id')
+        voter_id = request.GET.get('user_id')
         content_type = request.GET.get('content_type')
         content_id = request.GET.get('content_id')
         if content_type == 'answer':
             answer_votes = AnswerVote.objects.filter(
-                Q(user__id=user_id) &
+                Q(voter__id=voter_id) &
                 Q(answer__id=content_id)
             )
 
@@ -35,7 +36,7 @@ def vote_api(request):
                 return JsonResponse({'vote': answer_votes[0].vote})
         elif content_type == 'question':
             question_votes = QuestionVote.objects.filter(
-                Q(user__id=user_id) &
+                Q(voter__id=voter_id) &
                 Q(question__id=content_id)
             )
 
@@ -43,25 +44,33 @@ def vote_api(request):
                 return JsonResponse({"vote": 0})
             else:
                 return JsonResponse({'vote': question_votes[0].vote})
-        else:
-            return JsonResponse({"error": "Invalid content_type or request method"})
+        elif content_type == 'article':
+                article_votes = AnswerVote.objects.filter(
+                    Q(voter__id=voter_id) &
+                    Q(answer__id=content_id)
+                )
+
+                if len(article_votes) == 0:
+                    return JsonResponse({"vote": 0})
+                else:
+                    return JsonResponse({'vote': article_votes[0].vote})
 
     if request.method == "POST":
         data = json.loads(request.body)
         content_type = data['content_type']
         content_id = data['content_id']
-        user_id = data['user_id']
+        voter_id = data['user_id']
         vote = data['vote']
 
         if content_type == 'answer':
             answer_votes = AnswerVote.objects.filter(
-                Q(user__id=user_id) &
+                Q(voter__id=voter_id) &
                 Q(answer__id=content_id)
             )
 
             if answer_votes.all().count() == 0:
                AnswerVote.objects.create(
-                    user=User.objects.get(id=user_id),
+                    voter=User.objects.get(id=voter_id),
                     answer=Answer.objects.get(id=content_id),
                     vote=vote,
                 )
@@ -75,13 +84,13 @@ def vote_api(request):
 
         elif content_type == 'question':
             question_votes = QuestionVote.objects.filter(
-                Q(user__id=user_id) &
+                Q(voter__id=voter_id) &
                 Q(question__id=content_id)
             )
 
             if question_votes.all().count() == 0:
                 QuestionVote.objects.create(
-                    user=User.objects.get(id=user_id),
+                    voter=User.objects.get(id=voter_id),
                     question=Question.objects.get(id=content_id),
                     vote=vote,
                 )
@@ -91,6 +100,24 @@ def vote_api(request):
                 question_vote.vote = vote
                 question_vote.save()
                 return JsonResponse({'vote': Question.objects.get(id=content_id).sum})
+        elif content_type == 'article':
+            article_votes = ArticleVote.objects.filter(
+                Q(voter__id=voter_id) &
+                Q(article__id=content_id)
+            )
+
+            if article_votes.all().count() == 0:
+                ArticleVote.objects.create(
+                    voter=User.objects.get(id=voter_id),
+                    article=Article.objects.get(id=content_id),
+                    vote=vote,
+                )
+                return JsonResponse({'vote': Article.objects.get(id=content_id).sum})
+            else:
+                article_vote = article_votes[0]
+                article_vote.vote = vote
+                article_vote.save()
+                return JsonResponse({'vote': Article.objects.get(id=content_id).sum})
 
 
 

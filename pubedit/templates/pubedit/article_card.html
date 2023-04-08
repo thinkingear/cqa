@@ -1,0 +1,18 @@
+<div class="card">
+    <!-- article title -->
+    <div class="row my-1">
+        <h5>{{ article.title }}</h5>
+    </div>
+    <!-- article content -->
+{#    <div class="row my-1">#}
+{#        <div class="d-flex align-items-center justify-content-center">#}
+{#            {{ article.feed|safe }}#}
+{#        </div>#}
+{##}
+{#    </div>#}
+    <div class="row my-1">
+        <!-- article toggle buttons -->
+        {% include 'core/components/vote.html' with content=article user=request.user content_type="article" id=article.uuid %}
+    </div>
+
+</div>

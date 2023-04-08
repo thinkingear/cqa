@@ -28,7 +28,8 @@ urlpatterns = [
     # account
     path('account/', include('account.urls')),
 
-
+    # pubedit
+    path('pubedit/', include('pubedit.urls')),
     # qa
     path('qa/', include('qa.urls')),
 
@@ -41,7 +42,6 @@ urlpatterns = [
     # chat
 
 
-    # post
-    path('post/', include('post.urls'))
+
 
 ]

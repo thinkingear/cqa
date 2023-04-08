@@ -16,8 +16,8 @@ class Article(Content):
 
     @property
     def sum(self):
-        total_votes = ArticleVote.objects.filter(answer=self).aggregate(sum_of_votes=Sum('vote'))
-        return total_votes
+        total_votes = ArticleVote.objects.filter(article=self).aggregate(sum_of_votes=Sum('vote'))
+        return total_votes['sum_of_votes']
 
 
 class ArticleVote(ContentVote):
@@ -25,5 +25,5 @@ class ArticleVote(ContentVote):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'article'], name='article_vote')
+            models.UniqueConstraint(fields=['voter', 'article'], name='article_voter')
         ]

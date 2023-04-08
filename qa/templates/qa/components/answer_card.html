@@ -45,7 +45,7 @@
         </div>
         <!-- answer toggle buttons -->
         <hr>
-        {% include 'core/components/vote.html' with content=answer user=request.user content_type="answer"%}
+        {% include 'core/components/vote.html' with content=answer user=request.user content_type="answer" id=answer.uuid %}
     </div>
 
 </div>

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'course.apps.CourseConfig',
     'comment.apps.CommentConfig',
     'chat.apps.ChatConfig',
-    'post.apps.PubeditConfig',
+    'pubedit.apps.PubeditConfig',
     'search.apps.SearchConfig',
     'tinymce',
 
@@ -136,6 +136,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "core/static",
+    BASE_DIR / "pubedit/static",
 ]
 
 # Default primary key field type

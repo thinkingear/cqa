@@ -1,25 +1,25 @@
 {% load static %}
 {% csrf_token %}
 <div class="btn-group shadow-0" role="group">
-    <button id="{{ content_type }}-vote-num" type="button" class="btn btn-outline-secondary btn-rounded"
+    <button id="{{ id }}-vote-num" type="button" class="btn btn-outline-secondary btn-rounded"
             data-mdb-ripple-color="dark">
         {% if content.sum %}{{ content.sum }}{% else %}0{% endif %}
     </button>
-    <button id="{{ content_type }}-upvote-button" type="button" class="btn btn-outline-secondary btn-rounded"
+    <button id="{{ id }}-upvote-button" type="button" class="btn btn-outline-secondary btn-rounded"
             data-mdb-ripple-color="dark">
         <i class="fa-solid fa-arrow-right fa-rotate-270"></i>
     </button>
-    <button id="{{ content_type }}-downvote-button" type="button" class="btn btn-outline-secondary btn-rounded"
+    <button id="{{ id }}-downvote-button" type="button" class="btn btn-outline-secondary btn-rounded"
             data-mdb-ripple-color="dark">
         <i class="fa-solid fa-arrow-right fa-rotate-90"></i>
     </button>
 </div>
 <script>
-    const {{ content_type }}content_type = "{{ content_type }}"
-    const {{ content_type }}content_id = {{ content.id }}
-    const {{ content_type }}user_id = {{ user.id }}
+    const {{ id }}content_type = "{{ content_type }}"
+    const {{ id }}content_id = {{ content.id }}
+    const {{ id }}user_id = {{ user.id }}
 
-    {{ content_type }}vote_state = {
+    {{ id }}vote_state = {
         upvoted: false,
         downvoted: false
     };
@@ -27,77 +27,76 @@
 
     service.get('/vote/', {
         params: {
-            content_type: {{ content_type }}content_type,
-            content_id: {{ content_type }}content_id,
-            user_id: {{ content_type }}user_id,
+            content_type: {{ id }}content_type,
+            content_id: {{ id }}content_id,
+            user_id: {{ id }}user_id,
         }
     }).then((response) => {
         vote = response.data.vote
         if (vote === 1) {
-            {{ content_type }}vote_state.upvoted = true
+            {{ id }}vote_state.upvoted = true
         } else if (vote === -1) {
-            {{ content_type }}vote_state.downvoted = true
-        } else {
+            {{ id }}vote_state.downvoted = true
         }
 
     }).catch((error) => {
     }).finally(() => {
     });
 
-    const {{ content_type }}voteNumButton = document.getElementById('{{ content_type }}-vote-num')
-    const {{ content_type }}upvoteButton = document.getElementById('{{ content_type }}-upvote-button');
-    const {{ content_type }}downvoteButton = document.getElementById('{{ content_type }}-downvote-button');
+    const {{ id }}voteNumButton = document.getElementById('{{ id }}-vote-num')
+    const {{ id }}upvoteButton = document.getElementById('{{ id }}-upvote-button');
+    const {{ id }}downvoteButton = document.getElementById('{{ id }}-downvote-button');
 
-    {{ content_type }}upvoteButton.addEventListener('click', async () => {
-        if (!{{ content_type }}vote_state.upvoted) {
+    {{ id }}upvoteButton.addEventListener('click', async () => {
+        if (!{{ id }}vote_state.upvoted) {
             await service.post('/vote/', {
-                content_type: {{ content_type }}content_type,
-                content_id: {{ content_type }}content_id,
-                user_id: {{ content_type }}user_id,
+                content_type: {{ id }}content_type,
+                content_id: {{ id }}content_id,
+                user_id: {{ id }}user_id,
                 vote: 1
             }).then((response) => {
-                {{ content_type }}voteNumButton.innerText = response.data.vote
+                {{ id }}voteNumButton.innerText = response.data.vote
             }).catch((error) => {
 
             });
 
             // Increment answer's vote count
             // Change upvote button icon color to blue
-            {{ content_type }}vote_state.upvoted = true;
+            {{ id }}vote_state.upvoted = true;
 
-            if ({{ content_type }}vote_state.downvoted) {
+            if ({{ id }}vote_state.downvoted) {
                 // Decrement answer's vote count
                 // Change downvote button icon color back to normal
-                {{ content_type }}vote_state.downvoted = false;
+                {{ id }}vote_state.downvoted = false;
             }
         } else {
             await service.post('/vote/', {
-                content_type: {{ content_type }}content_type,
-                content_id: {{ content_type }}content_id,
-                user_id: {{ content_type }}user_id,
+                content_type: {{ id }}content_type,
+                content_id: {{ id }}content_id,
+                user_id: {{ id }}user_id,
                 vote: 0,
             }).then((response) => {
-                {{ content_type }}voteNumButton.innerText = response.data.vote
+                {{ id }}voteNumButton.innerText = response.data.vote
             }).catch((error) => {
 
             });
 
             // Decrement answer's vote count
             // Change upvote button icon color back to normal
-            {{ content_type }}vote_state.upvoted = false;
+            {{ id }}vote_state.upvoted = false;
         }
     });
 
-    {{ content_type }}downvoteButton.addEventListener('click', async () => {
+    {{ id }}downvoteButton.addEventListener('click', async () => {
 
-        if (!{{ content_type }}vote_state.downvoted) {
+        if (!{{ id }}vote_state.downvoted) {
             await service.post('/vote/', {
-                content_type: {{ content_type }}content_type,
-                content_id: {{ content_type }}content_id,
-                user_id: {{ content_type }}user_id,
+                content_type: {{ id }}content_type,
+                content_id: {{ id }}content_id,
+                user_id: {{ id }}user_id,
                 vote: -1,
             }).then((response) => {
-                {{ content_type }}voteNumButton.innerText = response.data.vote
+                {{ id }}voteNumButton.innerText = response.data.vote
             }).catch((error) => {
 
             });
@@ -105,28 +104,28 @@
 
             // Decrement answer's vote count
             // Change downvote button icon color to red
-            {{ content_type }}vote_state.downvoted = true;
+            {{ id }}vote_state.downvoted = true;
 
-            if ({{ content_type }}vote_state.upvoted) {
+            if ({{ id }}vote_state.upvoted) {
                 // Increment answer's vote count
                 // Change upvote button icon color back to normal
-                {{ content_type }}vote_state.upvoted = false;
+                {{ id }}vote_state.upvoted = false;
             }
         } else {
             await service.post('/vote/', {
-                content_type: {{ content_type }}content_type,
-                content_id: {{ content_type }}content_id,
-                user_id: {{ content_type }}user_id,
+                content_type: {{ id }}content_type,
+                content_id: {{ id }}content_id,
+                user_id: {{ id }}user_id,
                 vote: 0,
             }).then((response) => {
-                {{ content_type }}voteNumButton.innerText = response.data.vote
+                {{ id }}voteNumButton.innerText = response.data.vote
             }).catch((error) => {
 
             });
 
             // Increment answer's vote count
             // Change downvote button icon color back to normal
-            {{ content_type }}vote_state.downvoted = false;
+            {{ id }}vote_state.downvoted = false;
         }
     });
 

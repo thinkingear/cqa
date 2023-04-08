@@ -1,0 +1,33 @@
+<!-- avatar -->
+<div class="col-md-1">
+    {% load static %}
+    <img
+            src="{% static 'account/images/default_avatar.jpg' %}"
+            class="rounded-circle"
+            height="45"
+            alt="default avatar"
+            loading="lazy"
+    />
+</div>
+<div class="col-md-11">
+    <!-- username | Follow -->
+    <div class="d-flex align-items-center">
+        <a href="#"><strong>@{{ content.poster }}</strong></a>
+        {% if request.user != content.poster %}
+            <span class="mx-1">·</span>
+            <a href="#">Follow</a>
+        {% endif %}
+    </div>
+
+    <!-- bio | updated -->
+    <div class="row mt-2">
+        <div style="color: #939598">
+                    <span>
+                        {% if content.poster.bio %}
+                            {{ content.poster.bio }} ·
+                        {% endif %}
+                        updated {{ content.updated | timesince }} ago
+                    </span>
+        </div>
+    </div>
+</div>
