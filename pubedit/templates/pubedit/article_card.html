@@ -1,18 +1,28 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'pubedit/css/article_card.css' %}">
+
 <div class="card">
     <!-- article title -->
     <div class="row my-1">
         <h5>{{ article.title }}</h5>
     </div>
     <!-- article content -->
-{#    <div class="row my-1">#}
-{#        <div class="d-flex align-items-center justify-content-center">#}
-{#            {{ article.feed|safe }}#}
-{#        </div>#}
-{##}
-{#    </div>#}
     <div class="row my-1">
-        <!-- article toggle buttons -->
-        {% include 'core/components/vote.html' with content=article user=request.user content_type="article" id=article.uuid %}
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="article-content">
+                {{ article.feed|safe }}
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <span class="read-more" onclick="toggleContent(this)">...read more</span>
+        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
+    </div>
+    <!-- article toggle buttons -->
+    <div class="row my-1">
+        {% include 'core/components/vote.html' with content=article content_type="article" id=article.uuid %}
     </div>
 
 </div>
+
+<script src="{% static 'pubedit/js/article_card.js' %}"></script>

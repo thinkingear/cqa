@@ -1,0 +1,13 @@
+.article-content {
+    position: relative;
+    max-height: 3em; /* 根据需要调整高度 */
+    overflow: hidden;
+    line-height: 1.5em;
+}
+
+.read-more, .collapse-content {
+    padding: 0 5px;
+    cursor: pointer;
+    color: #508bfc;
+}
+
