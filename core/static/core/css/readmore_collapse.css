@@ -1,8 +1,9 @@
-.article-content {
+.content-content {
     position: relative;
-    max-height: 3em; /* 根据需要调整高度 */
+    max-height: 3px; /* 根据需要调整高度 */
     overflow: hidden;
     line-height: 1.5em;
+    /*line-height: 3em;*/
 }
 
 .read-more, .collapse-content {

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from django.utils import timezone
 
-from qa.models import Question
+from qa.models import Question, Answer
 from pubedit.models import Article
 
 # Create your views here.
@@ -26,6 +26,10 @@ def search_page(request):
     elif content_type == 'article':
         contents += Article.objects.filter(
             Q(title__icontains=q) |
+            Q(feed__icontains=q)
+        )
+    elif content_type == 'answer':
+        contents += Answer.objects.filter(
             Q(feed__icontains=q)
         )
 

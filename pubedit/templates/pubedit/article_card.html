@@ -1,5 +1,5 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'pubedit/css/article_card.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
 
 <div class="card">
     <!-- article title -->
@@ -9,7 +9,7 @@
     <!-- article content -->
     <div class="row my-1">
         <div class="d-flex align-items-center justify-content-center">
-            <div class="article-content">
+            <div class="content-content">
                 {{ article.feed|safe }}
             </div>
         </div>
@@ -25,4 +25,4 @@
 
 </div>
 
-<script src="{% static 'pubedit/js/article_card.js' %}"></script>
+<script src="{% static 'core/js/readmore_collapse.js' %}"></script>

@@ -3,6 +3,8 @@ from account.models import User
 from uuid import uuid4
 
 # Create your models here.
+
+
 class Content(models.Model):
     poster = models.ForeignKey(User, default=None, on_delete=models.CASCADE, related_name='%(class)s_posted')
     created = models.DateTimeField(auto_now_add=True)

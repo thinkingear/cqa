@@ -1,5 +1,8 @@
 {% load static %}
-<div class="card">
+<link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
+<div class="card mb-3 py-3">
+    <div class="row"><h4>{{ answer.question }}</h4></div>
+    <hr>
     <!-- answer detail -->
     <div class="row">
         <!-- avatar -->
@@ -35,16 +38,24 @@
             </div>
         </div>
     </div>
-
-    <hr>
-
     <!-- answer content -->
-    <div class="my-2">
+    <div class="row">
         <div class="d-flex align-items-center justify-content-center">
-            {{ answer.feed|safe }}
+            <div class="content-content">
+                {{ answer.feed|safe }}
+            </div>
         </div>
-        <!-- answer toggle buttons -->
-        <hr>
+    </div>
+    <!-- read more | collapse -->
+    <div class="row my-1">
+        <span class="read-more" onclick="toggleContent(this)">...read more</span>
+        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
+    </div>
+    <hr>
+    <!-- answer toggle buttons -->
+    <div class="row">
         {% include 'core/components/vote.html' with content=answer content_type="answer" id=answer.uuid %}
     </div>
 </div>
+
+<script src="{% static 'core/js/readmore_collapse.js' %}"></script>
