@@ -9,7 +9,7 @@
                 <div class="col-12 col-md-8 col-lg-8 col-xl-8">
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
                         <div class="card-header">
-                            {% include 'qa/components/question_card.html' with question=question %}
+                            {% include 'qa/question_card.html' with question=question %}
                         </div>
                         <form class="card-body p-5 text-center"
                               method="post" action="{% url 'qa:answer_create' question.id %}">
@@ -20,8 +20,8 @@
 
                                 <a type="button" class="btn btn-light btn-rounded"
                                    href="{% url 'core:home' %}">Cancel</a>
-                                <button type="button" id="answer_create_save" class="btn btn-primary btn-rounded"
-                                         >Save</button>
+{#                                <button type="button" id="answer_create_save" class="btn btn-primary btn-rounded"#}
+{#                                         >Save</button>#}
 
                                 <button type="submit" id="answer_create_submit" class="btn btn-primary btn-rounded"
                                         >Submit

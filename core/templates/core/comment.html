@@ -1,0 +1,27 @@
+{% load static %}
+<!-- comment component -->
+<div class="comment-box" style="display: none;">
+    <!-- comment send -->
+    <div class="row comment-send-box my-2">
+        <div class="col-md-1"></div>
+        <div class="col-md-1">
+            <img src="{% static 'account/images/default_avatar.jpg' %}" alt="User profile picture"
+                 class="rounded-circle"
+                 width="40" height="40">
+        </div>
+        <div class="col-md-7">
+            <input type="text" class="form-control comment-feed-input" placeholder="Add a comment...">
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-primary"
+                    onclick="sendComment(this, '{{ content.content_type_str }}', {{ content.id }}, {{ user.id }})">Add comment
+            </button>
+        </div>
+    </div>
+    <!-- comment list -->
+    {% if content.get_comments %}
+    <hr>
+    {% include 'core/comment_list.html' with comments=content.get_comments content_type=content.content_type_str %}
+    {% endif %}
+</div>
+

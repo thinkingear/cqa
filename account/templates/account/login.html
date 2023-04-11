@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
     <section class="vh-100" style="background-color: #508bfc;">
@@ -14,8 +13,8 @@
 
                             <form method="post" action="{% url 'account:login' %}">
                                 {% csrf_token %}
-                                {% include 'account/components/account_input.html' with field=form.email field_tyep='email' field_label='Email' field_remain=True %}
-                                {% include 'account/components/account_input.html' with field=form.password field_type='password' field_label='Password' field_remain=False %}
+                                {% include 'account/account_input.html' with field=form.email field_tyep='email' field_label='Email' field_remain=True %}
+                                {% include 'account/account_input.html' with field=form.password field_type='password' field_label='Password' field_remain=False %}
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
                             </form>
 

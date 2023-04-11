@@ -19,10 +19,22 @@
         <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
     </div>
     <!-- article toggle buttons -->
-    <div class="row my-1">
-        {% include 'core/components/vote.html' with content=article content_type="article" id=article.uuid %}
+    <div class="row my-2 article-toggle-bar">
+        <div class="col-md-9">
+            <button type="button" class="btn btn-light btn-rounded">
+                <i class="fa-solid fa-wifi fa-rotate-90"></i>
+                Follow · {{ question.followers.all.count }}
+            </button>
+            {% include 'core/vote.html' with content=answer %}
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1">
+            <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)" style="cursor: pointer;"></i>
+        </div>
     </div>
-
+    <div class="row my-1">
+        {% include 'core/comment.html' with content=answer user=request.user %}
+    </div>
 </div>
 
 <script src="{% static 'core/js/readmore_collapse.js' %}"></script>

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
 # Create your models here.
 
 
@@ -11,7 +10,6 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -37,3 +35,28 @@ class UserProfile(models.Model):
     decription = models.TextField(null=True, blank=True)
 
 
+class ArticleFollower(models.Model):
+    article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    constraints = [
+        models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='article_follower')
+    ]
+
+
+class AnswerFollower(models.Model):
+    answer = models.ForeignKey('qa.Answer', on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    constraints = [
+        models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='answer_follower')
+    ]
+
+
+class QuestionFollower(models.Model):
+    question = models.ForeignKey('qa.Question', on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    constraints = [
+        models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='question_follower')
+    ]

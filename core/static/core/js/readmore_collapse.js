@@ -5,7 +5,7 @@ function toggleContent(element) {
     const collapseContent = row.querySelector('.collapse-content');
 
     if (contentContent.style.maxHeight === 'none') {
-        contentContent.style.maxHeight = '3px'; // 根据需要调整高度
+        contentContent.style.maxHeight = '5rem'; // 根据需要调整高度
         readMore.style.display = '';
         collapseContent.style.display = 'none';
     } else {

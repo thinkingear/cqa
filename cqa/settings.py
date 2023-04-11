@@ -40,10 +40,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'qa.apps.QaConfig',
     'course.apps.CourseConfig',
-    'comment.apps.CommentConfig',
-    'chat.apps.ChatConfig',
     'pubedit.apps.PubeditConfig',
-    'search.apps.SearchConfig',
     'tinymce',
 
     'corsheaders',
@@ -136,7 +133,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "core/static",
+    BASE_DIR / "account/static",
+    BASE_DIR / "qa/static",
     BASE_DIR / "pubedit/static",
+    BASE_DIR / "course/static",
 ]
 
 # Default primary key field type
@@ -149,11 +149,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:8080",
-#     "http://127.0.0.1:8080",
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
 
 EMAIL_BACKEND_PATH = 'account.backends.EmailBackend'
 AUTHENTICATION_BACKENDS = [
@@ -175,3 +180,5 @@ TINYMCE_DEFAULT_CONFIG = {
     "custom_undo_redo_levels": 10,
     "language": "es_ES",  # To force a specific language instead of the Django current language.
 }
+
+LOGIN_URL = '/account/login/'

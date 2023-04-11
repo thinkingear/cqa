@@ -1,9 +1,6 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
-<div class="card mb-3 py-3">
-    <div class="row"><h4>{{ answer.question }}</h4></div>
-    <hr>
-    <!-- answer detail -->
+<div class="card">
+    <!-- answer meta -->
     <div class="row">
         <!-- avatar -->
         <div class="col-md-1">
@@ -38,24 +35,33 @@
             </div>
         </div>
     </div>
+
     <!-- answer content -->
-    <div class="row">
+    <div class="row my-2">
         <div class="d-flex align-items-center justify-content-center">
-            <div class="content-content">
-                {{ answer.feed|safe }}
-            </div>
+            {{ answer.feed|safe }}
         </div>
     </div>
-    <!-- read more | collapse -->
-    <div class="row my-1">
-        <span class="read-more" onclick="toggleContent(this)">...read more</span>
-        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
-    </div>
+
     <hr>
+
     <!-- answer toggle buttons -->
-    <div class="row">
-        {% include 'core/components/vote.html' with content=answer content_type="answer" id=answer.uuid %}
+    <div class="row my-2 answer-toggle-bar">
+        <div class="col-md-9">
+            <button type="button" class="btn btn-light btn-rounded">
+                <i class="fa-solid fa-wifi fa-rotate-90"></i>
+                Follow · {{ answer.followers.all.count }}
+            </button>
+            {% include 'core/vote.html' with content=answer %}
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1">
+            <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)" style="cursor: pointer;"></i>
+        </div>
+    </div>
+    <div class="row my-1">
+        {% include 'core/comment.html' with content=answer user=request.user %}
     </div>
 </div>
 
-<script src="{% static 'core/js/readmore_collapse.js' %}"></script>
+<script src="{% static 'core/js/comment.js' %}"></script>

@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="card">
     <!-- question title -->
     <div class="row">
@@ -9,9 +11,10 @@
     </div>
 
     <!-- question toggle button -->
-    <div class="row my-2">
+    <div class="row my-2 qustion-toggle-bar">
         <div class="col-md-9">
-            <a type="button" class="btn btn-outline-secondary btn-rounded" data-mdb-ripple-color="dark" href="{% url 'qa:answer_create' question.id %}">
+            <a type="button" class="btn btn-outline-secondary btn-rounded" data-mdb-ripple-color="dark"
+               href="{% url 'qa:answer_create' question.id %}">
                 <i class="fa-solid fa-pen-to-square"></i>
                 Answer
             </a>
@@ -19,10 +22,16 @@
                 <i class="fa-solid fa-wifi fa-rotate-90"></i>
                 Follow · {{ question.followers.all.count }}
             </button>
-            {% include 'core/components/vote.html' with content=question user=request.user content_type="question" id=question.uuid %}
-
-
+            {% include 'core/vote.html' with content=question %}
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1">
+            <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)" style="cursor: pointer;"></i>
+        </div>
+    </div>
+    <div class="row my-1">
+        {% include 'core/comment.html' with content=question user=request.user %}
     </div>
 </div>
+
+<script src="{% static 'core/js/comment.js' %}"></script>

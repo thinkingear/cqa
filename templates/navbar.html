@@ -16,7 +16,7 @@
         <div class="d-flex align-items-center ms-5">
             <!-- Search form -->
             <form class="ms-3 d-flex input-group w-auto"
-                method="get" action="{% url 'search:search' %}">
+                method="get" action="{% url 'core:search' %}">
                 <div class="form-outline">
                     <input type="search" name="q" id="form1" class="form-control" style="width: 400px" value="{% if search_query %}{{ search_query }}{% else %}{% endif %}"/>
                     <label class="form-label" for="form1">Search</label>

@@ -1,0 +1,59 @@
+{% load static %}
+{% for comment in comments %}
+    <div class="card comment">
+        <div class="row">
+            <!-- Avartar  -->
+            <div class="col-md-1 ms-1 my-2">
+                <img src="{% static 'account/images/default_avatar.jpg' %}" alt="User profile picture"
+                     class="rounded-circle"
+                     width="40" height="40">
+            </div>
+            <!-- poster | comment content -->
+            <div class="col-md-10">
+                <!-- poster name -->
+                <div class="row my-2">
+                    <div class="col-md-12">
+                        <strong>{{ comment.poster }}</strong>
+                        <span style="color: #939598"> · {{ comment.updated | timesince }}</span>
+                    </div>
+                </div>
+                <!-- comment feed -->
+                <div class="row my-2 ms-2">
+                    {{ comment.feed }}
+                </div>
+                <!-- comment toggle button( vote, reply )  -->
+                <div class="row vote-reply my-2 d-flex">
+                    <!-- vote -->
+                    <div class="col-md-4">
+                        {% include 'core/vote.html' with content=comment %}
+                    </div>
+                    <!-- reply button -->
+                    <div class="col-md-8">
+                        <div class="reply-button">
+                            <button class="btn btn-link" onclick="toggleReplyForm(this)">Reply</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- comment toggle button( reply input, cancel, reply ) -->
+                <div class="row reply-form my-2 d-none">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control reply-input" placeholder="Add a reply...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary" onclick="toggleReplyCancel(this)">cancel</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary reply-confirm" disabled onclick="toggleReplyConfirm(this, 'comment', {{ comment.id }}, {{ user.id }})">Reply</button>
+                    </div>
+                </div>
+
+                <!-- Recursively include the base comment template for child comments -->
+                {% if comment.get_comments %}
+                    <div class="row">
+                        {% include 'core/comment_list.html' with comments=comment.get_comments %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endfor %}

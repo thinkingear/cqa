@@ -8,7 +8,7 @@
         <div class="col-md-8 mt-3">
             <!-- quesiont card -->
             <div class="row">
-                {% include 'qa/components/question_card.html' with question=question %}
+                {% include 'qa/question_card.html' with question=question %}
             </div>
 
             <hr>
@@ -16,7 +16,7 @@
             <!-- just one first for the test -->
             {% for answer in answers %}
             <div class="row my-3">
-                {% include 'qa/components/answer_card.html' with request=request answer=answer %}
+                {% include 'qa/answer_card.html' with request=request answer=answer %}
             </div>
             {% endfor %}
 

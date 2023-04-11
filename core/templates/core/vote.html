@@ -1,0 +1,22 @@
+{% load static %}
+{% csrf_token %}
+
+<div class="btn-group shadow-0 vote-button" role="group"
+    data-content-type="{{ content.content_type_str }}"
+    data-content-id="{{ content.id }}"
+    data-user-id="{{ request.user.id }}">
+    <button type="button" class="btn btn-outline-secondary btn-rounded vote-num"
+            data-mdb-ripple-color="dark">
+        {% if content.vote_sum %}{{ content.vote_sum }}{% else %}0{% endif %}
+    </button>
+    <button type="button" class="btn btn-outline-secondary btn-rounded upvote-button"
+            data-mdb-ripple-color="dark">
+        <i class="fa-solid fa-arrow-right fa-rotate-270"></i>
+    </button>
+    <button type="button" class="btn btn-outline-secondary btn-rounded downvote-button"
+            data-mdb-ripple-color="dark">
+        <i class="fa-solid fa-arrow-right fa-rotate-90"></i>
+    </button>
+</div>
+
+<script src="{% static 'core/js/vote.js' %}"></script>
