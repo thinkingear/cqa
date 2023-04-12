@@ -16,7 +16,7 @@
             <!-- just one first for the test -->
             {% for answer in answers %}
             <div class="row my-3">
-                {% include 'qa/answer_card.html' with request=request answer=answer %}
+                {% include 'qa/answer_card.html' with answer=answer show_question=False %}
             </div>
             {% endfor %}
 

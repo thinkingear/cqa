@@ -1,7 +1,16 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
+
 <div class="card">
-    <!-- answer meta -->
+    {% if show_question %}
     <div class="row">
+        <a href="{% url 'qa:question_detail' answer.question.id %}"><h3>{{ answer.question.title }}</h3></a>
+    </div>
+    {% endif %}
+
+
+    <!-- answer meta -->
+    <div class="row mt-2">
         <!-- avatar -->
         <div class="col-md-1">
             <img
@@ -39,10 +48,15 @@
     <!-- answer content -->
     <div class="row my-2">
         <div class="d-flex align-items-center justify-content-center">
-            {{ answer.feed|safe }}
+            <div class="content-content">
+                {{ answer.feed|safe }}
+            </div>
         </div>
     </div>
-
+    <div class="row my-1">
+        <span class="read-more" onclick="toggleContent(this)">...read more</span>
+        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
+    </div>
     <hr>
 
     <!-- answer toggle buttons -->
@@ -65,3 +79,4 @@
 </div>
 
 <script src="{% static 'core/js/comment.js' %}"></script>
+<script src="{% static 'core/js/readmore_collapse.js' %}"></script>

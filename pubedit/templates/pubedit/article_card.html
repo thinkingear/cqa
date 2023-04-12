@@ -23,7 +23,7 @@
         <div class="col-md-9">
             <button type="button" class="btn btn-light btn-rounded">
                 <i class="fa-solid fa-wifi fa-rotate-90"></i>
-                Follow · {{ question.followers.all.count }}
+                Follow · {{ article.followers.all.count }}
             </button>
             {% include 'core/vote.html' with content=answer %}
         </div>
@@ -37,4 +37,5 @@
     </div>
 </div>
 
+<script src="{% static 'core/js/comment.js' %}"></script>
 <script src="{% static 'core/js/readmore_collapse.js' %}"></script>

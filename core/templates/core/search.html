@@ -53,7 +53,7 @@
                     {% if content.content_type_str == 'question' %}
                         {% include 'qa/question_card.html' with question=content %}
                     {% elif content.content_type_str == 'answer' %}
-                        {% include 'core/answer_card_for_search.html' with answer=content %}
+                        {% include 'qa/answer_card.html' with answer=content show_question=True %}
                     {% elif content.content_type_str == 'article' %}
                         {% include 'pubedit/article_card.html' with article=content %}
                     {% endif %}
