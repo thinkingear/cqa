@@ -57,7 +57,7 @@ def vote(request):
             Q(content_id=content_id)
         )
 
-        if len(content_votes) == 0:
+        if not content_votes.exists():
             return JsonResponse({"vote": 0})
         else:
             return JsonResponse({'vote': content_votes[0].vote})
