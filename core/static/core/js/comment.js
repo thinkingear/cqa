@@ -86,7 +86,6 @@ function toggleReplyConfirm(element, content_type, content_id, poster_id) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
     const replyInputs = document.querySelectorAll('.reply-input')
     replyInputs.forEach((replyInput) => {
         const replyConfirm = findAncestorWithClass(replyInput, '.reply-confirm')

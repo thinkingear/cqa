@@ -1,0 +1,9 @@
+  .link-style {
+    cursor: pointer;
+    text-decoration: none;
+    transition: text-decoration 0.3s;
+  }
+
+  .link-style:hover {
+    text-decoration: underline;
+  }

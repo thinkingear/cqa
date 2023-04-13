@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const content_id = vote_button.dataset.contentId
         const user_id = vote_button.dataset.userId
 
-        console.log(`Content Type: ${content_type}, Content ID: ${content_id}, User ID: ${user_id}`)
+        // console.log(`Content Type: ${content_type}, Content ID: ${content_id}, User ID: ${user_id}`)
 
         let vote_state = {
             upvoted: false,

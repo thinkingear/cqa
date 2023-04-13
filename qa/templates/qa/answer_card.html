@@ -27,7 +27,7 @@
                 <a href="#"><strong>@{{ answer.poster.username }}</strong></a>
                 {% if request.user != answer.poster %}
                     <span class="mx-1">·</span>
-                    <a href="#">Follow</a>
+                    {% include 'account/follow_button.html' with followed=answer.poster %}
                 {% endif %}
             </div>
 

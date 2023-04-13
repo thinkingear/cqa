@@ -8,7 +8,7 @@ from .models import Question
 def question_create_page(request):
     if request.method == 'POST':
         Question.objects.create(
-            title=request.POST.get('title') + '?',
+            title=request.POST.get('title'),
             poster=request.user,
         )
         return redirect('core:home')

@@ -1,0 +1,12 @@
+{% load static %}
+<button type="button"
+        class="btn btn-outline-primary btn-rounded follow-button"
+        data-mdb-ripple-color="dark"
+        data-followed-id="{{ followed.id }}"
+        data-follower-id="{{ request.user.id }}"
+        onclick="toggleFollowButton(this)">
+    <i class="fa-solid fa-user-plus"></i>
+    Follow
+</button>
+
+<script src="{% static 'account/js/follow_button.js' %}"></script>

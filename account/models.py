@@ -32,44 +32,15 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(null=True, blank=True)
-    decription = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
 
 class AccountFollower(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'follower'], name='user_follower')
+            models.UniqueConstraint(fields=['followed', 'follower'], name='followed_follower')
         ]
 
-
-class ArticleFollower(models.Model):
-    article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='article_follower')
-        ]
-
-
-class AnswerFollower(models.Model):
-    answer = models.ForeignKey('qa.Answer', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='answer_follower')
-        ]
-
-
-class QuestionFollower(models.Model):
-    question = models.ForeignKey('qa.Question', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['follower', 'content_type', 'content_id'], name='question_follower')
-        ]

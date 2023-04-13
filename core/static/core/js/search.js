@@ -1,36 +1,36 @@
-function setSelectedFilters() {
+function setSeartchSelectedFilters() {
     const queryParams = new URLSearchParams(window.location.search);
     const selectedContentType = queryParams.get('type');
     const selectedTime = queryParams.get('time');
 
     if (selectedContentType) {
-        filterForm.elements['content-type'].value = selectedContentType;
+        filterForm.elements['search-content-type'].value = selectedContentType;
     }
     if (selectedTime) {
-        filterForm.elements['time'].value = selectedTime;
+        filterForm.elements['search-time'].value = selectedTime;
     }
 }
 
-document.addEventListener('DOMContentLoaded', setSelectedFilters);
+document.addEventListener('DOMContentLoaded', setSeartchSelectedFilters);
 
 
 // 获取筛选表单和表单元素
-const filterForm = document.getElementById('filter-form');
-const contentTypeInputs = filterForm.elements['content-type'];
-const timeInputs = filterForm.elements['time'];
+const searchFilterForm = document.getElementById('search-filter-form');
+const searchContentTypeInputs = searchFilterForm.elements['search-content-type'];
+const searchTimeInputs = searchFilterForm.elements['search-time'];
 
 // 添加事件监听器
-for (const input of contentTypeInputs) {
-    input.addEventListener('change', updateFilters);
+for (const input of searchContentTypeInputs) {
+    input.addEventListener('change', updateSearchFilters);
 }
-for (const input of timeInputs) {
-    input.addEventListener('change', updateFilters);
+for (const input of searchTimeInputs) {
+    input.addEventListener('change', updateSearchFilters);
 }
 
 // 更新筛选条件
-function updateFilters() {
-    const selectedContentType = filterForm.elements['content-type'].value;
-    const selectedTime = filterForm.elements['time'].value;
+function updateSearchFilters() {
+    const selectedContentType = searchContentTypeInputs.value;
+    const selectedTime = searchTimeInputs.value;
 
     // 构建新的 URL
     const queryParams = new URLSearchParams(window.location.search);

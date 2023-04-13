@@ -25,7 +25,7 @@
                 <i class="fa-solid fa-wifi fa-rotate-90"></i>
                 Follow · {{ article.followers.all.count }}
             </button>
-            {% include 'core/vote.html' with content=answer %}
+            {% include 'core/vote.html' with content=article %}
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-1">
@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="row my-1">
-        {% include 'core/comment.html' with content=answer user=request.user %}
+        {% include 'core/comment.html' with content=article user=request.user %}
     </div>
 </div>
 

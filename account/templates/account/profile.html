@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'account/css/profile.css' %}">
+    <div class="row mt-4">
+        <!-- margin -->
+        <div class="col-md-1"></div>
+        <!-- account profile -->
+        <div class="col-md-7" id="profile-info" data-user-id="{{ user.id }} data-request-user-id={{ request.user.id }}">
+            <!-- avatar, username, followers, folling, profile bio -->
+            <div class="row">
+                <!-- avatar -->
+                <div class="col-md-3">
+                    <img
+                            src="{% static 'account/images/default_avatar.jpg' %}"
+                            class="rounded-circle"
+                            height="120"
+                            alt="default avatar"
+                            loading="lazy"
+                    />
+                </div>
+                <!--  username, followers, folling, profile bio -->
+                <div class="col-md-9">
+                    <!-- username -->
+                    <div class="row">
+                        <h3>{{ user.username }}</h3>
+                    </div>
+                    <!-- profile bio -->
+                    <div class="row">
+                        <div class="profile-content" style="cursor: pointer;"
+                             onclick="displayProfileEditor(this, 'profile-content-bio')">
+                            <strong><span>{{ user.userprofile.bio }}</span></strong>
+                        </div>
+                        <div class="form-outline profile-editor" style="display: none;" id="editable-bio">
+                            <textarea class="form-control" id="profile-content-bio" rows="2"
+                                      onblur="hideProfileEditor(this, 'profile-content-bio')"></textarea>
+                            <label class="form-label" for="profile-content-bio">profile bio</label>
+                        </div>
+                    </div>
+                    <!-- followers, following -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span data-mdb-toggle="modal"
+                                  data-mdb-target="#followerModal"
+                                  class="link-style">
+                                {{ user.following.all.count }} followers
+                            </span>
+                            <span> · </span>
+                            <span data-mdb-toggle="modal"
+                                  data-mdb-target="#followingModal"
+                                  class="link-style">
+                                {{ user.followers.all.count }} following
+                            </span>
+                        </div>
+                        <!-- Follower Modal -->
+                        <div class="modal fade" id="followerModal" tabindex="-1" aria-labelledby="followerModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Followers</h5>
+                                        <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- List followers here -->
+                                        {% for account_follower in user.following.all %}
+                                            {% with follower=account_follower.follower %}
+                                            <div class="row">
+                                                <!-- account avatar -->
+                                                <div class="col-md-1 me-2">
+                                                    <a href="{% url 'account:profile' follower.id %}">
+                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                         alt="User profile picture"
+                                                         class="rounded-circle"
+                                                         width="40" height="40">
+                                                    </a>
+                                                </div>
+                                                <!-- user info -->
+                                                <div class="col-md-8">
+                                                    <!-- username, bio -->
+                                                    <div class="row">
+                                                        <span>
+                                                            <a href="{% url 'account:profile' follower.id %}">
+                                                                <strong>{{ follower.username }}</strong>
+                                                            </a>
+                                                            {% if follower.userprofile.bio != 'Add profile bio' %}
+                                                            , {{ follower.userprofile.bio  }}
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <!-- #followers followers -->
+                                                    <div class="row" style="color: #939598;">
+                                                        <span>{{ follower.following.all.count }} followers</span>
+                                                    </div>
+                                                </div>
+                                                <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                                <div class="col-md-3">
+                                                    {% include 'account/follow_button.html' with followed=follower %}
+                                                </div>
+                                            </div>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Following Modal -->
+                        <div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Following</h5>
+                                        <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- List following here -->
+                                        {% for account_follower in user.followers.all %}
+                                            {% with followed=account_follower.followed %}
+                                            <div class="row">
+                                                <!-- account avatar -->
+                                                <div class="col-md-1 me-2">
+                                                    <a href="{% url 'account:profile' followed.id %}">
+                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                         alt="User profile picture"
+                                                         class="rounded-circle"
+                                                         width="40" height="40">
+                                                    </a>
+                                                </div>
+                                                <!-- user info -->
+                                                <div class="col-md-8">
+                                                    <!-- username, bio -->
+                                                    <div class="row">
+                                                        <span>
+                                                            <a href="{% url 'account:profile' followed.id %}">
+                                                                <strong>{{ followed.username }}</strong>
+                                                            </a>
+                                                            {% if followed.userprofile.bio != 'Add profile bio' %}
+                                                            , {{ followed.userprofile.bio  }}
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <!-- #followers followers -->
+                                                    <div class="row" style="color: #939598;">
+                                                        <span>{{ followed.following.all.count }} followers</span>
+                                                    </div>
+                                                </div>
+                                                <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                                <div class="col-md-3">
+{#                                                    {% include 'acccount/follow.html' %}#}
+                                                </div>
+                                            </div>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- margin -->
+                        <div class="col-md-6"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- account description -->
+            <div class="row mt-3">
+                <div class="profile-content" style="color: #939598; cursor: pointer;"
+                     onclick="displayProfileEditor(this, 'profile-content-description')">
+                    <span>{{ user.userprofile.description }}</span>
+                </div>
+                <div class="form-outline profile-editor" style="display: none;">
+                    <textarea class="form-control" id="profile-content-description" rows="2"
+                              onblur="hideProfileEditor(this, 'profile-content-description')"></textarea>
+                    <label class="form-label" for="profile-content-description">profile description</label>
+                </div>
+            </div>
+            <!-- content type toggle button group -->
+            <div class="row mt-3">
+                <form id="profile-filter-form">
+                    <div class="btn-group" role="group" aria-label="button group">
+                        <input type="radio" class="btn-check" name="profile-content-type"
+                               id="profile-content-type-answers"
+                               autocomplete="off" value="answer"/>
+                        <label class="btn btn-light btn-lg me-1"
+                               for="profile-content-type-answers">{{ user.answer_posted.count }} Answers</label>
+
+                        <input type="radio" class="btn-check" name="profile-content-type"
+                               id="profile-content-type-questions"
+                               autocomplete="off" value="question"/>
+                        <label class="btn btn-light btn-lg mx-1"
+                               for="profile-content-type-questions">{{ user.question_posted.count }} Questions</label>
+
+                        <input type="radio" class="btn-check" name="profile-content-type"
+                               id="profile-content-type-posts"
+                               autocomplete="off" value="article"/>
+                        <label class="btn btn-light btn-lg mx-1"
+                               for="profile-content-type-posts">{{ user.article_posted.count }} Posts</label>
+
+                        <input type="radio" class="btn-check" name="profile-content-type"
+                               id="profile-content-type-cousres"
+                               autocomplete="off" value="course"/>
+                        <label class="btn btn-light btn-lg mx-1"
+                               for="profile-content-type-cousres">0 Courses</label>
+
+                        <input type="radio" class="btn-check" name="profile-content-type"
+                               id="profile-content-type-following"
+                               autocomplete="off" value="following"/>
+                        <label class="btn btn-light btn-lg ms-1" for="profile-content-type-following">following</label>
+                    </div>
+                    <hr>
+                </form>
+            </div>
+            <!-- content for a specific content type -->
+            <div class="row">
+                {% if content_type == 'question' %}
+                    {% for question in user.question_posted.all %}
+                        {% include 'qa/question_card.html' with question=question %}
+                    {% endfor %}
+                {% elif content_type == 'answer' %}
+                    {% for answer in user.answer_posted.all %}
+                        {% include 'qa/answer_card.html' with answer=answer show_question=True %}
+                    {% endfor %}
+                {% elif content_type == 'article' %}
+                    {% for article in user.article_posted.all %}
+                        {% include 'pubedit/article_card.html' with article=article %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- margin -->
+        <div class="col-md-4">
+
+        </div>
+    </div>
+
+    <script src="{% static 'account/js/profile.js' %}"></script>
+{% endblock content %}

@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from account.forms import RegistrationForm, LoginForm
 from django.shortcuts import redirect, render
-from account.models import User
+from account.models import User, UserProfile
 from django.contrib.auth import login, logout
 from .backends import EmailBackend
 from .models import AccountFollower
@@ -21,8 +21,14 @@ def register_page(request):
             user.email = user.email.strip()
             user.password = user.password.strip()
             user.username = user.username.strip()
-
             user.save()
+
+            UserProfile.objects.create(
+                user=user,
+                bio='Add profile bio',
+                description='Write a description about yourself!',
+            )
+
             login(request, user, backend=settings.EMAIL_BACKEND_PATH)
             return redirect('core:home')
         else:
@@ -135,5 +141,47 @@ def follow(request):
             return JsonResponse({'status': 'followed'})
         else:
             return JsonResponse({'status': 'unfollowed'})
+
+
+def profile_page(request, user_id, content_type=None):
+    if request.method == 'GET':
+        if content_type is None:
+            return redirect('account:profile_content_type', user_id=user_id, content_type='answer')
+
+        user = User.objects.get(id=user_id)
+        context = {'user': user, 'content_type': content_type}
+        return render(request, 'account/profile.html', context)
+
+
+def profile_bio(request, user_id):
+    if request.method == 'POST':
+        user = User.objects.get(id=user_id)
+        if user != request.user:
+            return JsonResponse({'status': 403})
+
+        data = json.loads(request.body)
+        bio = data['bio']
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.bio = bio
+        user_profile.save()
+        return JsonResponse({'status': 200})
+
+    return JsonResponse({'status': 403})
+
+
+def profile_description(request, user_id):
+    if request.method == 'POST':
+        user = User.objects.get(id=user_id)
+        if user != request.user:
+            return JsonResponse({'status': 403})
+
+        data = json.loads(request.body)
+        description = data['description']
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.description = description
+        user_profile.save()
+        return JsonResponse({'status': 200})
+
+    return JsonResponse({'status': 403})
 
 
