@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from .forms import ArticleForm
-from .models import Article
+from core.views import content_follow
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -16,3 +17,8 @@ def article_create_page(request):
     form = ArticleForm()
     context = {'form': form}
     return render(request, 'pubedit/article_create.html', context)
+
+
+@csrf_exempt
+def article_follow(request):
+    return content_follow(request, 'article', 'articlefollower')

@@ -7,7 +7,7 @@
         <!-- margin -->
         <div class="col-md-1"></div>
         <!-- account profile -->
-        <div class="col-md-7" id="profile-info" data-user-id="{{ user.id }} data-request-user-id={{ request.user.id }}">
+        <div class="col-md-7" id="profile-info" data-user-id="{{ user.id }}" data-request-user-id="{{ request.user.id }}">
             <!-- avatar, username, followers, folling, profile bio -->
             <div class="row">
                 <!-- avatar -->
@@ -24,7 +24,12 @@
                 <div class="col-md-9">
                     <!-- username -->
                     <div class="row">
-                        <h3>{{ user.username }}</h3>
+                        <div class="col-md-8">
+                            <h3>{{ user.username }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            {% include 'account/follow_button.html' with followed=user %}
+                        </div>
                     </div>
                     <!-- profile bio -->
                     <div class="row">
@@ -67,39 +72,39 @@
                                         <!-- List followers here -->
                                         {% for account_follower in user.following.all %}
                                             {% with follower=account_follower.follower %}
-                                            <div class="row">
-                                                <!-- account avatar -->
-                                                <div class="col-md-1 me-2">
-                                                    <a href="{% url 'account:profile' follower.id %}">
-                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
-                                                         alt="User profile picture"
-                                                         class="rounded-circle"
-                                                         width="40" height="40">
-                                                    </a>
-                                                </div>
-                                                <!-- user info -->
-                                                <div class="col-md-8">
-                                                    <!-- username, bio -->
-                                                    <div class="row">
+                                                <div class="d-flex align-items-center my-1">
+                                                    <!-- account avatar -->
+                                                    <div class="col-md-1 me-2">
+                                                        <a href="{% url 'account:profile' follower.id %}">
+                                                            <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                                 alt="User profile picture"
+                                                                 class="rounded-circle"
+                                                                 width="40" height="40">
+                                                        </a>
+                                                    </div>
+                                                    <!-- user info -->
+                                                    <div class="col-md-8">
+                                                        <!-- username, bio -->
+                                                        <div class="row">
                                                         <span>
                                                             <a href="{% url 'account:profile' follower.id %}">
-                                                                <strong>{{ follower.username }}</strong>
+                                                                <strong>@{{ follower.username }}</strong>
                                                             </a>
                                                             {% if follower.userprofile.bio != 'Add profile bio' %}
-                                                            , {{ follower.userprofile.bio  }}
+                                                                , {{ follower.userprofile.bio }}
                                                             {% endif %}
                                                         </span>
+                                                        </div>
+                                                        <!-- #followers followers -->
+                                                        <div class="row" style="color: #939598;">
+                                                            <span>{{ follower.following.all.count }} followers</span>
+                                                        </div>
                                                     </div>
-                                                    <!-- #followers followers -->
-                                                    <div class="row" style="color: #939598;">
-                                                        <span>{{ follower.following.all.count }} followers</span>
+                                                    <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                                    <div class="col-md-3">
+                                                        {% include 'account/follow_button.html' with followed=follower %}
                                                     </div>
                                                 </div>
-                                                <!-- FOLLOW/UNFOLLOW BUTTON -->
-                                                <div class="col-md-3">
-                                                    {% include 'account/follow_button.html' with followed=follower %}
-                                                </div>
-                                            </div>
                                             {% endwith %}
                                         {% endfor %}
                                     </div>
@@ -120,39 +125,39 @@
                                         <!-- List following here -->
                                         {% for account_follower in user.followers.all %}
                                             {% with followed=account_follower.followed %}
-                                            <div class="row">
-                                                <!-- account avatar -->
-                                                <div class="col-md-1 me-2">
-                                                    <a href="{% url 'account:profile' followed.id %}">
-                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
-                                                         alt="User profile picture"
-                                                         class="rounded-circle"
-                                                         width="40" height="40">
-                                                    </a>
-                                                </div>
-                                                <!-- user info -->
-                                                <div class="col-md-8">
-                                                    <!-- username, bio -->
-                                                    <div class="row">
+                                                <div class="d-flex align-items-center my-1">
+                                                    <!-- account avatar -->
+                                                    <div class="col-md-1 me-2">
+                                                        <a href="{% url 'account:profile' followed.id %}">
+                                                            <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                                 alt="User profile picture"
+                                                                 class="rounded-circle"
+                                                                 width="40" height="40">
+                                                        </a>
+                                                    </div>
+                                                    <!-- user info -->
+                                                    <div class="col-md-8">
+                                                        <!-- username, bio -->
+                                                        <div class="row">
                                                         <span>
                                                             <a href="{% url 'account:profile' followed.id %}">
-                                                                <strong>{{ followed.username }}</strong>
+                                                                <strong>@{{ followed.username }}</strong>
                                                             </a>
                                                             {% if followed.userprofile.bio != 'Add profile bio' %}
-                                                            , {{ followed.userprofile.bio  }}
+                                                                , {{ followed.userprofile.bio }}
                                                             {% endif %}
                                                         </span>
+                                                        </div>
+                                                        <!-- #followers followers -->
+                                                        <div class="row" style="color: #939598;">
+                                                            <span>{{ followed.following.all.count }} followers</span>
+                                                        </div>
                                                     </div>
-                                                    <!-- #followers followers -->
-                                                    <div class="row" style="color: #939598;">
-                                                        <span>{{ followed.following.all.count }} followers</span>
+                                                    <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                                    <div class="col-md-3">
+                                                        {% include 'account/follow_button.html' with followed=followed %}
                                                     </div>
                                                 </div>
-                                                <!-- FOLLOW/UNFOLLOW BUTTON -->
-                                                <div class="col-md-3">
-{#                                                    {% include 'acccount/follow.html' %}#}
-                                                </div>
-                                            </div>
                                             {% endwith %}
                                         {% endfor %}
                                     </div>
@@ -211,9 +216,9 @@
                                autocomplete="off" value="following"/>
                         <label class="btn btn-light btn-lg ms-1" for="profile-content-type-following">following</label>
                     </div>
-                    <hr>
                 </form>
             </div>
+            <hr>
             <!-- content for a specific content type -->
             <div class="row">
                 {% if content_type == 'question' %}
@@ -228,6 +233,8 @@
                     {% for article in user.article_posted.all %}
                         {% include 'pubedit/article_card.html' with article=article %}
                     {% endfor %}
+                {% elif content_type == 'following' %}
+                    {% include 'account/profile_follow.html' with user=user following_type=following_type %}
                 {% endif %}
             </div>
         </div>

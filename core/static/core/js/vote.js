@@ -27,8 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let vote = response.data.vote
             if (vote === 1) {
                 vote_state.upvoted = true
+                upvote_button.classList.remove('btn-outline-secondary')
+                upvote_button.classList.add('btn-primary')
             } else if (vote === -1) {
                 vote_state.downvoted = true
+                downvote_button.classList.remove('btn-outline-secondary')
+                downvote_button.classList.add('btn-primary')
             }
         }).catch((error) => {
         }).finally(() => {
@@ -43,19 +47,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     vote: 1
                 }).then((response) => {
                     vote_num_button.innerText = response.data.vote
+                    // Increment answer's vote count
+                    // Change upvote button icon color to blue
+                    vote_state.upvoted = true;
+                    upvote_button.classList.remove('btn-outline-secondary')
+                    upvote_button.classList.add('btn-primary')
+
+                    if (vote_state.downvoted) {
+                        // Decrement answer's vote count
+                        // Change downvote button icon color back to normal
+                        vote_state.downvoted = false;
+                        downvote_button.classList.remove('btn-primary')
+                        downvote_button.classList.add('btn-outline-secondary')
+                    }
                 }).catch((error) => {
 
                 });
 
-                // Increment answer's vote count
-                // Change upvote button icon color to blue
-                vote_state.upvoted = true;
 
-                if (vote_state.downvoted) {
-                    // Decrement answer's vote count
-                    // Change downvote button icon color back to normal
-                    vote_state.downvoted = false;
-                }
             } else {
                 await service.post('/vote/', {
                     content_type: content_type,
@@ -64,13 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     vote: 0,
                 }).then((response) => {
                     vote_num_button.innerText = response.data.vote
+                    // Decrement answer's vote count
+                    // Change upvote button icon color back to normal
+                    vote_state.upvoted = false;
+                    upvote_button.classList.remove('btn-primary')
+                    upvote_button.classList.add('btn-outline-secondary')
                 }).catch((error) => {
 
                 });
-
-                // Decrement answer's vote count
-                // Change upvote button icon color back to normal
-                vote_state.upvoted = false;
             }
         });
 
@@ -91,11 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Decrement answer's vote count
                 // Change downvote button icon color to red
                 vote_state.downvoted = true;
+                downvote_button.classList.remove('btn-outline-secondary')
+                downvote_button.classList.add('btn-primary')
 
                 if (vote_state.upvoted) {
                     // Increment answer's vote count
                     // Change upvote button icon color back to normal
                     vote_state.upvoted = false;
+                    upvote_button.classList.remove('btn-primary')
+                    upvote_button.classList.add('btn-outline-secondary')
                 }
             } else {
                 await service.post('/vote/', {
@@ -105,13 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     vote: 0,
                 }).then((response) => {
                     vote_num_button.innerText = response.data.vote
+                    // Increment answer's vote count
+                    // Change downvote button icon color back to normal
+                    vote_state.downvoted = false;
+                    downvote_button.classList.remove('btn-primary')
+                    downvote_button.classList.add('btn-outline-secondary')
                 }).catch((error) => {
 
                 });
-
-                // Increment answer's vote count
-                // Change downvote button icon color back to normal
-                vote_state.downvoted = false;
             }
         });
     })

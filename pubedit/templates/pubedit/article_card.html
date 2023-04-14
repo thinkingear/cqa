@@ -21,10 +21,7 @@
     <!-- article toggle buttons -->
     <div class="row my-2 article-toggle-bar">
         <div class="col-md-9">
-            <button type="button" class="btn btn-light btn-rounded">
-                <i class="fa-solid fa-wifi fa-rotate-90"></i>
-                Follow · {{ article.followers.all.count }}
-            </button>
+            {% include 'core/content_follow_button.html' with content=article %}
             {% include 'core/vote.html' with content=article %}
         </div>
         <div class="col-md-2"></div>

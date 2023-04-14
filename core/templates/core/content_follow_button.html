@@ -1,0 +1,14 @@
+{% load static %}
+
+<button type="button" class="btn btn-light btn-rounded content-follow-button"
+        data-content-type="{{ content.content_type_str }}"
+        data-content-id="{{ content.id }}"
+        data-follower-id="{{ request.user.id }}"
+        onclick="toggleContentButton(this)">
+    <i class="fa-solid fa-wifi fa-rotate-90"></i>
+    <span class="content-follow-button-text">Follow</span>
+    <span> · </span>
+    <span class="content-follow-button-num">{{ content.followers.all.count }}</span>
+</button>
+
+<script src="{% static 'core/js/content_follow_button.js' %}"></script>

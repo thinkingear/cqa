@@ -17,8 +17,12 @@ function toggleFollowButton(element) {
         let status = response.data.status
         if (status === 'followed') {
             element.innerHTML = '<i class="fa-solid fa-user-check"></i> Following'
+            element.classList.remove('btn-outline-primary')
+            element.classList.add('btn-secondary')
         } else if (status === 'unfollowed') {
             element.innerHTML = '<i class="fa-solid fa-user-plus"></i> Follow'
+            element.classList.remove('btn-secondary')
+            element.classList.add('btn-outline-primary')
         }
     }).catch((error) => {
 
@@ -45,8 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let status = response.data.status
             if (status === 'followed') {
                 follow_button.innerHTML = '<i class="fa-solid fa-user-check"></i> Following'
+                follow_button.classList.remove('btn-outline-primary')
+                follow_button.classList.add('btn-secondary')
             } else if (status === 'unfollowed') {
                 follow_button.innerHTML = '<i class="fa-solid fa-user-plus"></i> Follow'
+                follow_button.classList.remove('btn-secondary')
+                follow_button.classList.add('btn-outline-primary')
             }
         }).catch((error) => {
 

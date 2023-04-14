@@ -1,0 +1,47 @@
+<!-- #Following Following | options -->
+<div class="d-flex align-items-center mb-2">
+    <!-- #Following Following  -->
+    <div class="col-md-4 fs-5">
+
+        {% if following_type == 'question' %}
+            {{ user.followed_questions.all.count }}
+        {% elif following_type == 'answer' %}
+            {{ user.followed_answers.all.count }}
+        {% elif following_type == 'article' %}
+            {{ user.followed_articles.all.count }}
+        {% endif %}
+        <span> Following</span>
+    </div>
+    <!-- margin -->
+    <div class="col-md-6"></div>
+    <!-- options button -->
+    <div class="col-md-2">
+        <!-- Default dropleft button -->
+        <div class="btn-group dropstart">
+            <button type="button" class="btn btn-light btn-lg dropdown-toggle text-capitalize" data-mdb-toggle="dropdown"
+                    aria-expanded="false">
+                {{ following_type }}s
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=answer">Answers</a></li>
+                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=question">Questions</a></li>
+                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=article">Articles</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+{% if following_type == 'question' %}
+    {% for question in user.followed_questions.all %}
+        {% include 'qa/question_card.html' with question=question %}
+    {% endfor %}
+{% elif following_type == 'answer' %}
+    {% for answer in user.followed_answers.all %}
+        {% include 'qa/answer_card.html' with answer=answer show_question=True %}
+    {% endfor %}
+{% elif following_type == 'article' %}
+    {% for article in user.followed_articles.all %}
+        {% include 'pubedit/article_card.html' with article=article %}
+    {% endfor %}
+{% endif %}

@@ -3,9 +3,9 @@
 
 <div class="card">
     {% if show_question %}
-    <div class="row">
-        <a href="{% url 'qa:question_detail' answer.question.id %}"><h3>{{ answer.question.title }}</h3></a>
-    </div>
+        <div class="row">
+            <a href="{% url 'qa:question_detail' answer.question.id %}"><h3>{{ answer.question.title }}</h3></a>
+        </div>
     {% endif %}
 
 
@@ -13,22 +13,20 @@
     <div class="row mt-2">
         <!-- avatar -->
         <div class="col-md-1">
-            <img
+            <a href="{% url 'account:profile' answer.poster.id %}"><img
                     src="{% static 'account/images/default_avatar.jpg' %}"
                     class="rounded-circle"
                     height="45"
                     alt="default avatar"
                     loading="lazy"
-            />
+            /></a>
         </div>
         <div class="col-md-11">
             <!-- username | follow -->
             <div class="d-flex align-items-center">
-                <a href="#"><strong>@{{ answer.poster.username }}</strong></a>
-                {% if request.user != answer.poster %}
-                    <span class="mx-1">·</span>
-                    {% include 'account/follow_button.html' with followed=answer.poster %}
-                {% endif %}
+                <a href="{% url 'account:profile' answer.poster.id %}"><strong>@{{ answer.poster.username }}</strong></a>
+                <span class="mx-1">·</span>
+                {% include 'account/follow_button.html' with followed=answer.poster %}
             </div>
 
             <!-- bio | updated -->
@@ -62,10 +60,7 @@
     <!-- answer toggle buttons -->
     <div class="row my-2 answer-toggle-bar">
         <div class="col-md-9">
-            <button type="button" class="btn btn-light btn-rounded">
-                <i class="fa-solid fa-wifi fa-rotate-90"></i>
-                Follow · {{ answer.followers.all.count }}
-            </button>
+            {% include 'core/content_follow_button.html' with content=answer %}
             {% include 'core/vote.html' with content=answer %}
         </div>
         <div class="col-md-2"></div>

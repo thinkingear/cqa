@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,7 +13,8 @@ from qa.models import Answer, Question
 
 
 def home_page(request):
-    return render(request, 'core/home.html')
+    # return render(request, 'core/home.html')
+    return redirect('core:search')
 
 
 @csrf_exempt
@@ -121,3 +122,58 @@ def search_page(request):
 
     context = {'search_query': q, 'contents': contents}
     return render(request, 'core/search.html', context)
+
+
+def content_follow(request, content_model_type_str, content_follower_model_type_str):
+    content_model_type = ContentType.objects.get(model=content_model_type_str)
+    content_follower_model_type = ContentType.objects.get(model=content_follower_model_type_str)
+
+    content_model = content_model_type.model_class()
+    content_follower_model = content_follower_model_type.model_class()
+
+    if request.method == 'GET':
+        content_id = request.GET.get('content_id')
+        follower_id = request.GET.get('follower_id')
+
+        content = content_model.objects.get(id=content_id)
+        follower = User.objects.get(id=follower_id)
+
+        query_filter = {content_model_type_str: content}
+
+        content_follower = content_follower_model.objects.filter(
+            Q(**query_filter) &
+            Q(follower=follower)
+        )
+
+        if content_follower.exists():
+            return JsonResponse({'status': 'followed'})
+        else:
+            return JsonResponse({'stauts': 'unfollowed'})
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        content_id = data['content_id']
+        follower_id = data['follower_id']
+        cmd = data['cmd']
+
+        content = content_model.objects.get(id=content_id)
+        follower = User.objects.get(id=follower_id)
+
+        query_filter = {content_model_type_str: content}
+
+        content_followers = content_follower_model.objects.filter(
+            Q(**query_filter) &
+            Q(follower=follower)
+        )
+
+        if cmd == 'unfollow':
+            if content_followers.exists():
+                content_followers[0].delete()
+            return JsonResponse({'count': content.followers.count(), 'status': 'unfollowed'})
+
+        elif cmd == 'follow':
+            if not content_followers.exists():
+                content_follower_model.objects.create(
+                    **query_filter,
+                    follower=follower,
+                )
+            return JsonResponse({'count': content.followers.count(), 'status': 'followed'})

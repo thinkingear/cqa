@@ -150,6 +150,12 @@ def profile_page(request, user_id, content_type=None):
 
         user = User.objects.get(id=user_id)
         context = {'user': user, 'content_type': content_type}
+
+        if content_type == 'following':
+            following_type = request.GET.get('type', '')
+            following_type = following_type if following_type != '' else 'answer'
+            context['following_type'] = following_type
+
         return render(request, 'account/profile.html', context)
 
 
@@ -183,5 +189,3 @@ def profile_description(request, user_id):
         return JsonResponse({'status': 200})
 
     return JsonResponse({'status': 403})
-
-

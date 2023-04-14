@@ -5,4 +5,5 @@ app_name = 'pubedit'
 
 urlpatterns = [
     path('create/', views.article_create_page, name='article_create'),
+    path('article/follow/', views.article_follow, name='article_follow'),
 ]

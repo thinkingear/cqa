@@ -16,9 +16,10 @@
         <div class="d-flex align-items-center ms-5">
             <!-- Search form -->
             <form class="ms-3 d-flex input-group w-auto"
-                method="get" action="{% url 'core:search' %}">
+                  method="get" action="{% url 'core:search' %}">
                 <div class="form-outline">
-                    <input type="search" name="q" id="form1" class="form-control" style="width: 400px" value="{% if search_query %}{{ search_query }}{% else %}{% endif %}"/>
+                    <input type="search" name="q" id="form1" class="form-control" style="width: 400px"
+                           value="{% if search_query %}{{ search_query }}{% else %}{% endif %}"/>
                     <label class="form-label" for="form1">Search</label>
                 </div>
                 <button type="submit" class="btn btn-primary">
@@ -67,9 +68,12 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li>
-                            <a class="dropdown-item" href="{% url 'account:profile' user_id=request.user.id %}">My profile</a>
+                            <a class="dropdown-item" href="{% url 'account:profile' user_id=request.user.id %}">My
+                                profile</a>
                         </li>
-                        <hr>
+                        <li>
+                            <hr class="dropdown-divider"/>
+                        </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'account:register' %}">Sign Up</a>
                         </li>
@@ -102,26 +106,16 @@
             {% if request.user.is_authenticated %}
                 <!-- add question or article -->
                 <div class="btn-group nav-item me-3 me-lg-1" role="group">
-                    <a
-                            id="btnGroupVerticalDrop1"
-                            type="button"
-                            class="btn btn-primary text-center"
-                            aria-expanded="false"
-                            href="{% url 'qa:question_create' %}"
-                    >
-                        <strong>Add question</strong>
-                    </a>
-
+                    <a type="button" class="btn btn-primary" href="{% url 'qa:question_create' %}">Add question</a>
                     <button
-                            id="btnGroupVerticalDrop2"
                             type="button"
-                            class="btn btn-dark dropdown-toggle"
+                            class="btn btn-dark dropdown-toggle dropdown-toggle-split"
                             data-mdb-toggle="dropdown"
                             aria-expanded="false"
                     >
-
+                        <span class="visually-hidden">Toggle Dropdown</span>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1">
+                    <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'pubedit:article_create' %}">Create post</a></li>
                     </ul>
                 </div>

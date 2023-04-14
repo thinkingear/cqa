@@ -1,7 +1,8 @@
 from django.shortcuts import redirect, render
 from .forms import QuestionForm, AnswerForm
-from .models import Question
-
+from .models import Question, Answer, QuestionFollower, AnswerFollower
+from core.views import content_follow
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -38,3 +39,13 @@ def question_detial(request, pk):
     context = {'question': question, 'answers': answers}
     return render(request, 'qa/question.html', context)
 
+
+@csrf_exempt
+def question_follow(request):
+    # check the questionfollower does exist
+    return content_follow(request, 'question', 'questionfollower')
+
+
+@csrf_exempt
+def answer_follow(request):
+    return content_follow(request, 'answer', 'answerfollower')
