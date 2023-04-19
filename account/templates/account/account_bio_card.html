@@ -1,0 +1,171 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'account/css/profile.css' %}">
+
+<!-- avatar -->
+
+<div class="col-md-{% if large %}2{% else %}1{% endif %}">
+    <a href="{% url 'account:profile' user.id %}">
+        <img
+                src="{% static 'account/images/default_avatar.jpg' %}"
+                class="rounded-circle"
+                height="55"
+                alt="default avatar"
+                loading="lazy"
+        />
+    </a>
+</div>
+<div class="col-md-{% if large %}10{% else %}11{% endif %}">
+    <!-- username -->
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'account:profile' user.id %}"><span><i
+                    class="fa-solid fa-at"></i>{{ user.username }}</span></a>
+        </div>
+    </div>
+    <!-- user description -->
+    <div class="row">
+        <div class="col">
+                    <span class="fw-light">{% if user.userprofile.bio != 'Add profile bio' %}
+                        {{ user.userprofile.bio }}{% endif %}</span>
+        </div>
+    </div>
+    <div class="row">
+        <!-- followers, following number -->
+        <div class="col">
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-start align-items-center">
+                            <span data-mdb-toggle="modal"
+                                  data-mdb-target="#followerModal"
+                                  class="link-style">
+                                {{ user.following.all.count }} followers
+                            </span>
+                    <span> · </span>
+                    <span data-mdb-toggle="modal"
+                          data-mdb-target="#followingModal"
+                          class="link-style">
+                                {{ user.followers.all.count }} following
+                            </span>
+                </div>
+                <!-- Follower Modal -->
+                <div class="modal fade" id="followerModal" tabindex="-1"
+                     aria-labelledby="followerModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">
+                                    Followers</h5>
+                                <button type="button" class="btn-close"
+                                        data-mdb-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- List followers here -->
+                                {% for account_follower in user.following.all %}
+                                    {% with follower=account_follower.follower %}
+                                        <div class="d-flex align-items-center my-1">
+                                            <!-- account avatar -->
+                                            <div class="col-md-1 me-2">
+                                                <a href="{% url 'account:profile' follower.id %}">
+                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                         alt="User profile picture"
+                                                         class="rounded-circle"
+                                                         width="40" height="40">
+                                                </a>
+                                            </div>
+                                            <!-- user info -->
+                                            <div class="col-md-8">
+                                                <!-- username, bio -->
+                                                <div class="row">
+                                <span>
+                                    <a href="{% url 'account:profile' follower.id %}">
+                                        <strong>@{{ follower.username }}</strong>
+                                    </a>
+                                    {% if follower.userprofile.bio != 'Add profile bio' %}
+                                        , {{ follower.userprofile.bio }}
+                                    {% endif %}
+                                </span>
+                                                </div>
+                                                <!-- #followers followers -->
+                                                <div class="row"
+                                                     style="color: #939598;">
+                                                    <span>{{ follower.following.all.count }} followers</span>
+                                                </div>
+                                            </div>
+                                            <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                            <div class="col-md-3">
+                                                {% include 'account/follow_button.html' with followed=follower %}
+                                            </div>
+                                        </div>
+                                    {% endwith %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Following Modal -->
+                <div class="modal fade" id="followingModal" tabindex="-1"
+                     aria-labelledby="followingModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">
+                                    Following</h5>
+                                <button type="button" class="btn-close"
+                                        data-mdb-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- List following here -->
+                                {% for account_follower in user.followers.all %}
+                                    {% with followed=account_follower.followed %}
+                                        <div class="d-flex align-items-center my-1">
+                                            <!-- account avatar -->
+                                            <div class="col-md-1 me-2">
+                                                <a href="{% url 'account:profile' followed.id %}">
+                                                    <img src="{% static 'account/images/default_avatar.jpg' %}"
+                                                         alt="User profile picture"
+                                                         class="rounded-circle"
+                                                         width="40" height="40">
+                                                </a>
+                                            </div>
+                                            <!-- user info -->
+                                            <div class="col-md-8">
+                                                <!-- username, bio -->
+                                                <div class="row">
+                                <span>
+                                    <a href="{% url 'account:profile' followed.id %}">
+                                        <strong>@{{ followed.username }}</strong>
+                                    </a>
+                                    {% if followed.userprofile.bio != 'Add profile bio' %}
+                                        , {{ followed.userprofile.bio }}
+                                    {% endif %}
+                                </span>
+                                                </div>
+                                                <!-- #followers followers -->
+                                                <div class="row"
+                                                     style="color: #939598;">
+                                                    <span>{{ followed.following.all.count }} followers</span>
+                                                </div>
+                                            </div>
+                                            <!-- FOLLOW/UNFOLLOW BUTTON -->
+                                            <div class="col-md-3">
+                                                {% include 'account/follow_button.html' with followed=followed %}
+                                            </div>
+                                        </div>
+                                    {% endwith %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- follow button -->
+        <div class="col">
+            {% include 'account/follow_button.html' with followed=user %}
+        </div>
+    </div>
+
+</div>

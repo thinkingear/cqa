@@ -3,11 +3,26 @@
 <div class="card">
     <!-- question title -->
     <div class="row">
-        <a href="{% url 'qa:question_detail' question.id %}"><h3>{{ question.title }}</h3></a>
+        <a href="{% url 'qa:question_detail' question.id %}" onclick="service.get('/history/', {
+            params: {
+                content_type: '{{ question.content_type_str }}',
+                content_id: {{ question.id }},
+                user_id: {{ request.user.id }},
+                cmd: 'create'
+            }
+        }).then((response) => {
+
+        }).catch((error) => {
+            console.log(error);
+        })"><h3>{{ question.title }}</h3></a>
     </div>
     <!-- qustion details -->
-    <div class="row mt-1" style="color: #939598">
-        <span><strong>{{ question.answers.all.count }} answers</strong> · updated {{ question.updated | timesince }} ago</span>
+    <div class="row mt-1">
+        <div class="col d-flex justify-content-start">
+            <div class="fw-light"><strong>{{ question.answers.all.count }} answers</strong> · updated {{ question.updated | timesince }} ago</div>
+            <div class="mx-2" style="border-left: 1px solid #666;"></div>
+            <div><i class="fa-solid fa-eye"></i> {{ question.views }}</div>
+        </div>
     </div>
 
     <!-- question toggle button -->

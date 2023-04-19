@@ -5,11 +5,13 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import User
-from .models import Vote, Comment
+from .models import Vote, Comment, ContentViewd
 from django.utils import timezone
 from pubedit.models import Article
 from qa.models import Answer, Question
 from course.models import Course
+from datetime import timedelta
+from django.utils import timezone
 # Create your views here.
 
 
@@ -191,3 +193,56 @@ def content_follow(request, content_model_type_str, content_follower_model_type_
                     follower=follower,
                 )
             return JsonResponse({'count': content.followers.count(), 'status': 'followed'})
+
+
+@csrf_exempt
+def history_handler(request):
+    user_id = request.GET.get('user_id', '')
+    content_type_str = request.GET.get('content_type', '')
+    cmd = request.GET.get('cmd', '')
+
+    user = User.objects.get(id=user_id)
+    content_type = ContentType.objects.get(model=content_type_str)
+
+    three_days_ago = timezone.now() - timedelta(days=1)
+
+    if cmd == 'create':
+        content_id = request.GET.get('content_id', '')
+        content_object = content_type.get_object_for_this_type(id=content_id)
+        # content_model = content_type.model_class()
+        contents_viewed = ContentViewd.objects.filter(
+            created__gt=three_days_ago,
+            content_type=content_type,
+            content_id=content_id,
+            user=user
+        )
+
+        if contents_viewed.exists():
+            content_viewd = contents_viewed[0]
+            content_viewd.created = timezone.now()
+            content_viewd.save()
+        else:
+            ContentViewd.objects.create(
+                content_type=content_type,
+                content_id=content_id,
+                content_object=content_object,
+                user=user,
+            )
+
+            if content_type_str in {'video', 'question', 'answer', 'article'}:
+                content_object.views += 1
+                content_object.save(update_fields=['views'])
+                return JsonResponse({'views': content_object.views})
+
+        return JsonResponse({'status': 'success'})
+
+    elif cmd == 'retrieve':
+        contents_viewed = ContentViewd.objects.filter(
+            created__gt=three_days_ago,
+            content_type=content_type,
+            user=user
+        )
+
+        contents = [content_viewed.content_object for content_viewed in contents_viewed]
+        context = {'contents': contents, 'content_type': content_type_str}
+        return render(request, 'account/history_viewed.html', context)

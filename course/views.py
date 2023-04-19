@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
+from django.urls import reverse
+
 from core.views import content_follow
 from .models import Course, Section, Video
 from .forms import CourseForm
 from django.views.decorators.csrf import csrf_exempt
-import json
 from django.http import JsonResponse
 import re
 from django.contrib.auth.decorators import login_required
@@ -16,6 +17,45 @@ def my_course(request):
     if request.method == 'GET':
         context = {}
         return render(request, 'course/my_course.html', context)
+
+
+def course_detial(request, pk):
+    course = Course.objects.get(id=pk)
+    if request.method == 'GET':
+        context = {'course': course}
+        video_id = request.GET.get('video', '')
+        if video_id == '':
+            sections = course.sections.all()
+            if len(sections) != 0:
+                section = sections[0]
+                videos = section.videos.all()
+                if len(videos) != 0:
+                    video_id = videos[0].id
+                    url = reverse('course:course_detial', kwargs={'pk': course.id})
+                    full_url = f"{url}?video={video_id}"
+                    return redirect(full_url)
+        else:
+            video = Video.objects.get(id=video_id)
+            context['video'] = video
+        return render(request, 'course/course_detail.html', context)
+
+
+@csrf_exempt
+def course_delete(request, pk):
+    course = Course.objects.get(id=pk)
+    if request.method == 'DELETE':
+        course.delete()
+        return JsonResponse({'status': 'ok'})
+
+
+@csrf_exempt
+def course_follow(request):
+    return content_follow(request, 'course', 'coursefollower')
+
+
+@csrf_exempt
+def video_follow(request):
+    return content_follow(request, 'video', 'videofollower')
 
 
 def new_course(request):
@@ -97,25 +137,6 @@ def new_course(request):
         context = {'form': form}
         return render(request, 'course/course_create.html', context)
 
-
-def course_detial(request, pk):
-    course = Course.objects.get(id=pk)
-    if request.method == 'GET':
-        context = {'course': course}
-        return render(request, 'course/course_detail.html', context)
-
-
-@csrf_exempt
-def course_delete(request, pk):
-    course = Course.objects.get(id=pk)
-    if request.method == 'DELETE':
-        course.delete()
-        return JsonResponse({'status': 'ok'})
-
-
-@csrf_exempt
-def course_follow(request):
-    return content_follow(request, 'course', 'coursefollower')
 
 
 @csrf_exempt
@@ -215,7 +236,7 @@ def update_course(request, course_id):
                 # at this time, some totally new user added section could have been created in the course.sections,
                 # so we have to exclude those sections first
                 if section.id not in section_object_id_2_counter:
-                    pass
+                    continue
 
                 section_counter = section_object_id_2_counter[section.id]
                 # considering that not id of section in database are already in the section_counter_2_video_counter_2_object_id

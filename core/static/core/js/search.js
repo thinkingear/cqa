@@ -1,23 +1,25 @@
-function setSeartchSelectedFilters() {
-    const queryParams = new URLSearchParams(window.location.search);
-    const selectedContentType = queryParams.get('type');
-    const selectedTime = queryParams.get('time');
-
-    if (selectedContentType) {
-        filterForm.elements['search-content-type'].value = selectedContentType;
-    }
-    if (selectedTime) {
-        filterForm.elements['search-time'].value = selectedTime;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', setSeartchSelectedFilters);
 
 
 // 获取筛选表单和表单元素
 const searchFilterForm = document.getElementById('search-filter-form');
 const searchContentTypeInputs = searchFilterForm.elements['search-content-type'];
 const searchTimeInputs = searchFilterForm.elements['search-time'];
+
+function setSeartchSelectedFilters() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const selectedContentType = queryParams.get('type');
+    const selectedTime = queryParams.get('time');
+
+    if (selectedContentType) {
+        searchFilterForm.elements['search-content-type'].value = selectedContentType;
+    }
+    if (selectedTime) {
+        searchFilterForm.elements['search-time'].value = selectedTime;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', setSeartchSelectedFilters);
+
 
 // 添加事件监听器
 for (const input of searchContentTypeInputs) {

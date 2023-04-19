@@ -1,7 +1,179 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/6.0.3/mediaelementplayer.min.css"
+          integrity="sha512-9dMFiFyikcX8OM6ZRtmk5DlIuaNEgtZv/abBnUMbs/rdOlYGeS/1qqCiaycA6nUFV8mW93CTUmMOvOH2Tur14Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
-    
 
+
+    <div class="container py-5">
+        <!-- singel row -->
+        <div class="row">
+            <!-- video detail -->
+            <div class="col-md-7">
+                {% if video %}
+                    <!-- video title -->
+                    <div class="row">
+                        <div class="col">
+                            <h4>{{ video.title }}</h4>
+                        </div>
+                    </div>
+                    <!-- video info: views, created time -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <span class="me-4"><i class="fa-brands fa-youtube"></i> {{ video.views }}</span>
+                            <span><i class="fa-solid fa-calendar"></i> {{ video.created }}</span>
+                        </div>
+                    </div>
+                    <!-- video file -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <!-- 视频播放器结构 -->
+                            <video id="my-video" width="640" height="360" controls>
+                                <source src="{{ video.video_file.url }}" type="video/mp4">
+                                您的浏览器不支持 HTML5 视频播放，请升级您的浏览器。
+                            </video>
+
+                        </div>
+                    </div>
+                    <!-- follow, vote buttons -->
+                    <div class="row mb-3">
+                        <div class="col d-flex justify-content-start align-items-center">
+                            <!-- follow -->
+                            <div class="mx-1">
+                                {% include 'core/content_follow_button.html' with content=video %}
+                            </div>
+                            <!-- vote -->
+                            <div class="mx-1">
+                                {% include 'core/vote.html' with content=video %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-width: 2px; border-color: rgba(0, 0, 0, 0.4); width: 100%;">
+                    <!-- video description -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            {{ video.description }}
+                        </div>
+                    </div>
+                    <hr style="border-width: 2px; border-color: rgba(0, 0, 0, 0.4); width: 100%;">
+                {% endif %}
+                <!-- course overview, video comment buttons -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="btn-group" role="group" aria-label="button group">
+                            <input type="radio" class="btn-check" name="course-bottom-selection"
+                                   id="course-overview-button" value="" checked
+                                   onclick="toggleCourseOverview(this)"
+                                   autocomplete="off"/>
+                            <label class="btn btn-light btn-lg me-1"
+                                   for="course-overview-button">
+                                Course Overview</label>
+
+                            {% if video %}
+                                <input type="radio" class="btn-check" name="course-bottom-selection"
+                                       id="course-video-comments-button" value=""
+                                       onclick="toggleCommentBoxForCourseDetail(this)"
+                                       autocomplete="off"/>
+                                <label class="btn btn-light btn-lg mx-1"
+                                       for="course-video-comments-button">
+                                    Comments({{ video.get_comments_num }})</label>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- course overview, video comment content -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <!-- course overview -->
+                        <div id="course-overview-content" style="display: block">
+                            {{ course.overview | safe }}
+                        </div>
+                        <!-- video comments -->
+                        {% if video %}
+                            <div>
+                                {% include 'core/comment.html' with content=video %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            <!-- poster info -->
+            <!-- section | video selector -->
+            <div class="col-md-5">
+                <!-- poster info -->
+                <div class="row">
+                    {% include 'account/account_bio_card.html' with user=course.poster large=True %}
+                </div>
+                <!-- section | video selector -->
+                <div class="row">
+                    <div class="col">
+                        <div class="accordion" id="course-sections">
+                            {% for section in course.sections.all %}
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button
+                                                class="accordion-button"
+                                                type="button"
+                                                data-mdb-toggle="collapse"
+                                                data-mdb-target="#section-{{ section.ordering }}"
+                                                aria-expanded="true"
+                                                aria-controls="collapseOne"
+                                        >
+                                            {{ section.title }}
+                                        </button>
+                                    </h2>
+                                    <div id="section-{{ section.ordering }}"
+                                         class="accordion-collapse collapse"
+                                         aria-labelledby="headingOne" data-mdb-parent="#course-sections">
+                                        <div class="accordion-body">
+                                            <div class="list-group list-group-light">
+                                                {% for video in section.videos.all %}
+                                                    <a href="{% url 'course:course_detial' course.id %}?video={{ video.id }}"
+                                                       class="list-group-item list-group-item-action px-3 border-0 ripple d-flex justify-content-between align-items-start"
+                                                       aria-current="true" id="video-{{ video.id }}">
+                                                        <div>
+                                                            {{ video.title }}
+                                                        </div>
+                                                        <div class="fw-light">{{ video.get_duration }}</div>
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'course/js/course_detail.js' %}"></script>
+    <script src="{% static 'core/js/comment.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const video = document.getElementById('my-video');
+            video.addEventListener('play', () => {
+                service.get('/history/', {
+                    params: {
+                        content_type: 'video',
+                        content_id: {{ video.id }},
+                        user_id: {{ request.user.id }},
+                        cmd: 'create',
+                    }
+                }).then((response) => {
+                    console.log(response)
+                }).catch((error) => {
+                    console.log(error);
+                })
+            });
+        });
+    </script>
 {% endblock %}

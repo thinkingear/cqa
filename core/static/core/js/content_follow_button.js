@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let app_name = ''
         if (content_type === 'article') {
             app_name = 'pubedit'
-        } else if (content_type === 'course') {
+        } else if (content_type === 'course' || content_type === 'video') {
             app_name = 'course'
         } else {
             app_name = 'qa'
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 content_follow_button_text.innerText = 'Following'
             }
         }).catch((error) => {
-
+            console.log(error)
         })
     })
 })
@@ -43,7 +43,7 @@ function toggleContentButton(element) {
     let app_name = ''
     if (content_type === 'article') {
         app_name = 'pubedit'
-    } else if (content_type === 'course') {
+    } else if (content_type === 'course' || content_type === 'video') {
         app_name = 'course'
     } else {
         app_name = 'qa'

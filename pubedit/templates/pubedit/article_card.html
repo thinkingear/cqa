@@ -3,11 +3,19 @@
 
 <div class="card">
     <!-- article title -->
-    <div class="row my-1">
-        <h5>{{ article.title }}</h5>
+    <div class="row mt-1">
+        <p class="fs-2 fw-bold">{{ article.title }}</p>
     </div>
+    <div class="row">
+        <div class="col d-flex justify-content-start">
+            <div class="fw-light">updated {{ article.updated | timesince }} ago</div>
+            <div class="mx-2" style="border-left: 1px solid #666;"></div>
+            <div><i class="fa-solid fa-eye"></i> {{ article.views }}</div>
+        </div>
+    </div>
+    <hr>
     <!-- article content -->
-    <div class="row my-1">
+    <div class="row mb-1">
         <div class="d-flex align-items-center justify-content-center">
             <div class="content-content">
                 {{ article.feed|safe }}
@@ -15,8 +23,8 @@
         </div>
     </div>
     <div class="row my-1">
-        <span class="read-more" onclick="toggleContent(this)">...read more</span>
-        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
+        <span class="read-more" onclick="toggleReadMoreButton(this, '{{ article.content_type_str }}', {{ article.id }}, {{ request.user.id }})">...read more</span>
+        <span class="collapse-content" onclick="toggleCollapseButton(this)" style="display: none;">...collapse</span>
     </div>
     <!-- article toggle buttons -->
     <div class="row my-2 article-toggle-bar">

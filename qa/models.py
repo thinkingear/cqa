@@ -8,6 +8,7 @@ from tinymce.models import HTMLField
 class Question(Content):
     title = models.CharField(max_length=128, blank=False, null=False, unique=True)
     followers = models.ManyToManyField(User, through='QuestionFollower', related_name='followed_questions')
+    views = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['-updated', '-created']
@@ -20,6 +21,7 @@ class Answer(Content):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     feed = HTMLField(null=True, blank=True)
     followers = models.ManyToManyField(User, through='AnswerFollower', related_name='followed_answers')
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.feed[:50]

@@ -10,6 +10,7 @@ class Article(Content):
     title = models.CharField(max_length=128, null=False, blank=False)
     followers = models.ManyToManyField(User, through='ArticleFollower', related_name='followed_articles')
     feed = HTMLField(null=True, blank=True)
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title

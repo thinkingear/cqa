@@ -2,6 +2,7 @@ from django.db import models
 from account.models import User
 from core.models import Content
 from tinymce.models import HTMLField
+from moviepy.editor import VideoFileClip
 # Create your models here.
 
 
@@ -71,6 +72,7 @@ class Video(Content):
     ordering = models.PositiveIntegerField(default=0)
     video_file = models.FileField(upload_to='videos/', null=True)
     views = models.PositiveIntegerField(default=0)
+    followers = models.ManyToManyField(User, through='VideoFollower', related_name='followed_videos')
     review_status = models.CharField(
         max_length=10,
         choices=[('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')],
@@ -79,6 +81,16 @@ class Video(Content):
 
     class Meta:
         ordering = ['ordering']
+
+    @property
+    def get_duration(self):
+        clip = VideoFileClip(self.video_file.path)
+        duration = clip.duration
+        clip.close()
+
+        minutes, seconds = divmod(int(duration), 60)
+        formatted_duration = f"{minutes:d}:{seconds:02d}"
+        return formatted_duration
 
     def __str__(self):
         return self.title
@@ -100,4 +112,15 @@ class CourseFollower(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['follower', 'course'], name='course_follower')
         ]
+
+
+class VideoFollower(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'video'], name='video_follower')
+        ]
+
 

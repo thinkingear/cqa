@@ -9,37 +9,16 @@
     {% endif %}
 
 
-    <!-- answer meta -->
+    <!-- answerer info -->
     <div class="row mt-2">
-        <!-- avatar -->
-        <div class="col-md-1">
-            <a href="{% url 'account:profile' answer.poster.id %}"><img
-                    src="{% static 'account/images/default_avatar.jpg' %}"
-                    class="rounded-circle"
-                    height="45"
-                    alt="default avatar"
-                    loading="lazy"
-            /></a>
-        </div>
-        <div class="col-md-11">
-            <!-- username | follow -->
-            <div class="d-flex align-items-center">
-                <a href="{% url 'account:profile' answer.poster.id %}"><strong>@{{ answer.poster.username }}</strong></a>
-                <span class="mx-1">·</span>
-                {% include 'account/follow_button.html' with followed=answer.poster %}
-            </div>
-
-            <!-- bio | updated -->
-            <div class="row mt-2">
-                <div style="color: #939598">
-                    <span>
-                        {% if answer.question.poster.bio %}
-                            {{ answer.question.poster.bio }} ·
-                        {% endif %}
-                        updated {{ answer.updated | timesince }} ago
-                    </span>
-                </div>
-            </div>
+        {% include 'account/account_bio_card.html' with user=answer.poster %}
+    </div>
+    <!-- updated, views -->
+    <div class="row">
+        <div class="col d-flex justify-content-start">
+            <div class="fw-light">updated {{ answer.updated | timesince }} ago</div>
+            <div class="mx-2" style="border-left: 1px solid #666;"></div>
+            <div><i class="fa-solid fa-eye"></i> {{ answer.views }}</div>
         </div>
     </div>
 
@@ -52,8 +31,8 @@
         </div>
     </div>
     <div class="row my-1">
-        <span class="read-more" onclick="toggleContent(this)">...read more</span>
-        <span class="collapse-content" onclick="toggleContent(this)" style="display: none;">...collapse</span>
+        <span class="read-more" onclick="toggleReadMoreButton(this, '{{ answer.content_type_str }}', {{ answer.id }}, {{ request.user.id }})">...read more</span>
+        <span class="collapse-content" onclick="toggleCollapseButton(this)" style="display: none;">...collapse</span>
     </div>
     <hr>
 
