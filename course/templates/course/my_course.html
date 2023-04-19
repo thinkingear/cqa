@@ -1,0 +1,21 @@
+{% extends 'core/content_backgroud.html' %}
+
+{% block content_backgroud %}
+    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <div class="card-header">
+            <nav class="navbar navbar-light bg-light" style="box-shadow: none;">
+                <div class="container-fluid">
+                    <a class="navbar-brand">My Courses</a>
+                    <a type="button" class="btn btn-success" href="{% url 'course:new_course' %}">New Course</a>
+                </div>
+            </nav>
+        </div>
+        <div class="card-body">
+            {% for course in request.user.course_posted.all %}
+                <div class="my-3">
+                {% include 'course/course_card.html' with course=course my_course=True %}
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

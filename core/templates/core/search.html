@@ -10,7 +10,8 @@
                 <div class="card" style="width: 18rem;">
                     <div class="card-header px-3 text-center"><span><strong>By type</strong></span></div>
                     <div class="btn-group-vertical my-1" role="group" aria-label="Vertical button group">
-                        <input type="radio" class="btn-check" name="search-content-type" id="search-content-type-question"
+                        <input type="radio" class="btn-check" name="search-content-type"
+                               id="search-content-type-question"
                                autocomplete="off" value="question"/>
                         <label class="btn btn-light" for="search-content-type-question">Questions</label>
 
@@ -18,9 +19,15 @@
                                autocomplete="off" value="answer"/>
                         <label class="btn btn-light" for="search-content-type-answer">Answer</label>
 
-                        <input type="radio" class="btn-check" name="search-content-type" id="search-content-type-article"
+                        <input type="radio" class="btn-check" name="search-content-type"
+                               id="search-content-type-article"
                                autocomplete="off" value="article"/>
                         <label class="btn btn-light" for="search-content-type-article">Articles</label>
+
+                        <input type="radio" class="btn-check" name="search-content-type"
+                               id="search-content-type-course"
+                               autocomplete="off" value="course"/>
+                        <label class="btn btn-light" for="search-content-type-course">Courses</label>
                     </div>
 
 
@@ -56,6 +63,8 @@
                         {% include 'qa/answer_card.html' with answer=content show_question=True %}
                     {% elif content.content_type_str == 'article' %}
                         {% include 'pubedit/article_card.html' with article=content %}
+                    {% elif content.content_type_str == 'course' %}
+                        {% include 'course/course_card.html' with course=content %}
                     {% endif %}
                 </div>
             {% endfor %}

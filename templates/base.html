@@ -41,25 +41,31 @@
 {% block content %}
 
 {% endblock %}
-    <!-- JavaScript -->
+<!-- JavaScript -->
 
-    <!-- MDB -->
-    <script
-            type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
-    ></script>
-    <script src="
+<!-- MDB -->
+<script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
+></script>
+<!-- sortable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"
+        integrity="sha512-Eezs+g9Lq4TCCq0wae01s9PuNWzHYoCMkE97e2qdkYthpI0pzC3UGB03lgEHn2XM85hDOUF6qgqqszs+iXU4UA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- markdown -->
+<script src="
 https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js
 "></script>
-    <script src="{% static 'tinymce/tinymce.min.js' %}">
-    </script>
-    <script>
-        // tinymce
-        tinymce.init({
-            selector: 'textarea.tinymce-editor'
-        })
+<!-- tinymce -->
+<script src="{% static 'tinymce/tinymce.min.js' %}">
+</script>
+<script>
+    // tinymce
+    tinymce.init({
+        selector: 'textarea.tinymce-editor'
+    })
 
-    </script>
+</script>
 
 
 </body>

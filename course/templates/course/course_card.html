@@ -1,0 +1,94 @@
+{% load static %}
+
+<div class="row d-flex justify-content-center align-items-center">
+    <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+            <!-- course info -->
+            <div class="row my-3 mx-2">
+                <!-- thumbnail -->
+                <div class="col-md-3 d-flex justify-content-center align-items-center">
+                    <img src="{{ course.thumbnail.url }}" alt="Course Thumbnail"
+                         class="thumbnail-image rounded img-fluid">
+                </div>
+                <!-- title, created, views, description -->
+                <div class="col-md-9">
+                    <!-- title -->
+                    <div class="row">
+                        <div class="col">
+                            <a href="{% url 'course:course_detial' course.id %}">
+                                <h1>{{ course.title }}</h1>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- created, views -->
+                    <div class="row">
+                        <!-- created -->
+                        <div class="col-md-7">
+                            <span><i class="fa-solid fa-calendar"></i> {{ course.created }}</span>
+                        </div>
+                        <!-- views -->
+                        <div class="col-md-5">
+                            <span><i class="fa-brands fa-youtube"></i> {{ course.views }}</span>
+                        </div>
+                    </div>
+                    <!-- description -->
+                    <div class="row">
+                        <div class="col">
+                            <span>
+                                {{ course.description }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- follow, vote, edit/delete button, comment -->
+            <div class="row mb-2">
+                <div class="col d-flex justify-content-start align-items-center">
+                    <!-- follow -->
+                    <div class="mx-1">
+                        {% include 'core/content_follow_button.html' with content=course %}
+                    </div>
+                    <!-- vote -->
+                    <div class="mx-1">
+                        {% include 'core/vote.html' with content=course %}
+                    </div>
+                </div>
+                <div class="col d-flex justify-content-end align-items-center me-3">
+                    <!-- edit/delete button -->
+                    <div class="btn-group dropstart" style="box-shadow: none;">
+                        <a type="button" class="btn " data-mdb-toggle="dropdown"
+                           aria-expanded="false">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if my_course %}
+                                <li><a class="dropdown-item" href="{% url 'course:update_course' course.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider"/>
+                                </li>
+                                <li><span class="dropdown-item" onclick="toggleDeleteCourseButton(this, {{ course.id }})"><i class="fa-solid fa-trash"></i> Delete</span>
+                                </li>
+                            {% else %}
+                                <li><a class="dropdown-item"
+                                       href="{% url 'account:profile' user_id=course.poster.id %}"><i
+                                        class="fa-solid fa-user-tie"></i> About author</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <!-- comment button -->
+                    <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)"
+                       style="cursor: pointer;"></i>
+                </div>
+            </div>
+            <!-- comment content -->
+            <div class="row">
+                {% include 'core/comment.html' with content=course %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'core/js/comment.js' %}"></script>
+<script src="{% static 'course/js/course_card.js' %}"></script>

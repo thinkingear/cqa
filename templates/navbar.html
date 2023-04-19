@@ -39,10 +39,18 @@
             </li>
 
             <li class="nav-item ms-3 me-3 me-lg-1">
+                <a class="nav-link" href="{% url 'course:my_course' %}">
+                    <span><i class="fa-sharp fa-solid fa-graduation-cap fa-lg"></i></span>
+                </a>
+            </li>
+
+            <li class="nav-item ms-3 me-3 me-lg-1">
                 <a class="nav-link" href="#">
                     <span><i class="fas fa-comments fa-lg"></i></span>
                 </a>
             </li>
+
+
 
 
             {% if request.user.is_authenticated %}

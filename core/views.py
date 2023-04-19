@@ -9,6 +9,7 @@ from .models import Vote, Comment
 from django.utils import timezone
 from pubedit.models import Article
 from qa.models import Answer, Question
+from course.models import Course
 # Create your views here.
 
 
@@ -94,16 +95,26 @@ def search_page(request):
 
     if content_type == 'question':
         contents += Question.objects.filter(
+            Q(poster__username__icontains=q) |
             Q(title__icontains=q)
         )
     elif content_type == 'article':
         contents += Article.objects.filter(
+            Q(poster__username__icontains=q) |
             Q(title__icontains=q) |
             Q(feed__icontains=q)
         )
     elif content_type == 'answer':
         contents += Answer.objects.filter(
+            Q(poster__username__icontains=q) |
             Q(feed__icontains=q)
+        )
+    elif content_type == 'course':
+        contents += Course.objects.filter(
+            Q(poster__username__icontains=q) |
+            Q(title__icontains=q) |
+            Q(description__icontains=q) |
+            Q(overview__icontains=q)
         )
 
     if time_filter == 'all':
@@ -157,6 +168,9 @@ def content_follow(request, content_model_type_str, content_follower_model_type_
 
         content = content_model.objects.get(id=content_id)
         follower = User.objects.get(id=follower_id)
+
+        if content.poster == follower:
+            return JsonResponse({'message': 'cannot follow your own content'})
 
         query_filter = {content_model_type_str: content}
 

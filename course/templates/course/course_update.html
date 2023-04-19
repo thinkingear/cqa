@@ -1,0 +1,193 @@
+{% extends 'core/content_backgroud.html' %}
+
+{% block content_backgroud %}
+    {% load static %}
+    {% load math_filters %}
+    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <div class="card-header">
+            <nav class="navbar navbar-light bg-light" style="box-shadow: none;">
+                <div class="container-fluid">
+                    <a class="navbar-brand">Update Course</a>
+                </div>
+            </nav>
+        </div>
+        <div class="card-body">
+            <form id="course-form" method="post" action="{% url 'course:update_course' course.id %}"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- Title -->
+                <div class="form-outline mb-4">
+                    <input type="text" id="title" class="form-control" name="{{ form.title.name }}"
+                           value="{{ course.title }}"/>
+                    <label class="form-label" for="title">Title</label>
+                </div>
+                <!-- Thumnail -->
+                <div class="mb-4">
+                    <label class="form-label" for="thumbnail">Thumbnail</label>
+                    <input type="file" class="form-control" id="thumbnail"
+                           onchange="previewThumbnail(event)"
+                           name="{{ form.thumbnail.name }}"/>
+                    <img id="thumbnail_preview" src="{{ course.thumbnail.url }}" alt="Thumbnail Preview"
+                         style="max-width: 200px; margin-top: 10px;">
+                </div>
+                <!-- Description -->
+                <div class="form-outline mb-4">
+                    <textarea id="description" class="form-control" rows="2"
+                              name="{{ form.description.name }}">{{ course.description }}</textarea>
+                    <label class="form-label" for="description">Description</label>
+                </div>
+                <!-- Overview -->
+                <div class="mb-4">
+                    <p class="fw-light">Overview</p>
+                    <textarea class="tinymce-editor" name="overview" id="{{ form.overview.auto_id }}"
+                              cols="{{ form.overview.widget.attrs.cols }}"
+                              rows="{{ form.overview.widget.attrs.rows }}">
+                            {{ course.overview|safe }}
+                        </textarea>
+                </div>
+                <!-- visibility -->
+                <div class="mb-4">
+                    <p class="fw-light">Visibility</p>
+                    <!-- private radio -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="{{ form.visibility.name }}" id="private"
+                               value="private" {% if course.visibility == 'private' %}checked{% endif %}/>
+                        <label class="form-check-label" for="private">Private</label>
+                    </div>
+                    <!-- public radio -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="{{ form.visibility.name }}" id="public"
+                               value="public" {% if course.visibility == 'public' %}checked{% endif %}/>
+                        <label class="form-check-label" for="public">Public</label>
+                    </div>
+                </div>
+                <!-- section add -->
+                <div class="row mb-4">
+                    <div class="col d-flex align-items-center">
+                        <span class="fw-light">Section</span>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-end">
+                        <button type="button" class="btn btn-success" onclick="addNewSection()">
+                            <i class="fa-solid fa-plus"></i>
+                            section
+                        </button>
+                    </div>
+                </div>
+                <!-- section table -->
+                <table class="table align-middle mb-0 bg-white sortable" id="section-table"
+                       data-initial-counter="{{ course.sections.all.count | sub:1 }}">
+                    <thead class="bg-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Add Video</th>
+                        <th>Delete</th>
+                        <th>Ordering</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for section in course.sections.all %}
+                        <tr class="draggable-row">
+                            <td>
+                                <input onblur="updateModalTitle(this)" type="text" class="form-control"
+                                       name="sections[{{ forloop.counter0 }}].title" value="{{ section.title }}"
+                                       required/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm px-3" data-ripple-color="dark"
+                                        data-mdb-toggle="modal" data-mdb-target="#section_{{ forloop.counter0 }}">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button onclick="deleteSection(this)" type="button"
+                                        class="btn btn-danger btn-sm px-3"
+                                        data-ripple-color="dark"><i class="fa-solid fa-trash-can"></i></button>
+                            </td>
+                            <td><i class="fa-solid fa-sort drag-handle"></i></td>
+                            <input type="hidden" name="sections[{{ forloop.counter0 }}].id" value="{{ section.id }}">
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Submit button -->
+                <button type="submit" class="btn btn-primary btn-block mb-4">Update</button>
+                <!-- Cancel button -->
+                <a type="button" class="btn btn-secondary btn-block" href="{% url 'course:my_course' %}">Cancel</a>
+                <!-- section modals -->
+                {% for section in course.sections.all %}
+                    {% with forloop.counter0 as outer_counter %}
+                        <div class="modal fade" id="section_{{ outer_counter }}" tabindex="-1"
+                             data-initial-counter="{{ section.videos.all.count | sub:1 }}"
+                             aria-labelledby="section_{{ outer_counter }}Label" aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"
+                                            id="section_{{ outer_counter }}Label">{{ section.title }}</h5>
+                                        <button type="button" class="btn btn-success ms-3"
+                                                onclick="addNewVideo(this)">
+                                            <i class="fa-solid fa-plus"></i>
+                                            video
+                                        </button>
+                                        <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table align-middle mb-0 bg-white sortable video-table">
+                                            <thead class="bg-light">
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Video</th>
+                                                <th>Delete</th>
+                                                <th>Ordering</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for video in section.videos.all %}
+                                                {% with forloop.counter0 as inner_counter %}
+                                                    <tr class="draggable-row">
+                                                        <td>
+                                                            <input type="text" class="form-control"
+                                                                   name="sections[{{ outer_counter }}].videos[{{ inner_counter }}].title"
+                                                                   value="{{ video.title }}" required>
+                                                        </td>
+                                                        <td>
+                                                    <textarea class="form-control"
+                                                              name="sections[{{ outer_counter }}].videos[{{ inner_counter }}].description"
+                                                              rows="1">{{ video.description }}</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input type="file" class="form-control"
+                                                                   name="sections[{{ outer_counter }}].videos[{{ inner_counter }}].file"
+                                                            >
+                                                        </td>
+                                                        <td>
+                                                            <button onclick="deleteVideo(this
+                                                    )" type="button" class="btn btn-danger btn-sm px-3"
+                                                                    data-ripple-color="dark"><i
+                                                                    class="fa-solid fa-trash-can"></i></button>
+                                                        </td>
+                                                        <td><i class="fa-solid fa-sort drag-handle"></i></td>
+                                                        <input type="hidden"
+                                                               name="sections[{{ outer_counter }}].videos[{{ inner_counter }}].id"
+                                                               value="{{ video.id }}">
+                                                    </tr>
+                                                {% endwith %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+    <script src="{% static 'course/js/course_create.js' %}"></script>
+    <script src="{% static 'course/js/course_update.js' %}">
+    </script>
+{% endblock %}

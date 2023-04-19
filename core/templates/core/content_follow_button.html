@@ -1,10 +1,14 @@
 {% load static %}
 
+
 <button type="button" class="btn btn-light btn-rounded content-follow-button"
         data-content-type="{{ content.content_type_str }}"
         data-content-id="{{ content.id }}"
         data-follower-id="{{ request.user.id }}"
-        onclick="toggleContentButton(this)">
+        onclick="toggleContentButton(this)"
+        {% if content.poster == request.user %}
+        disabled
+        {% endif %}>
     <i class="fa-solid fa-wifi fa-rotate-90"></i>
     <span class="content-follow-button-text">Follow</span>
     <span> · </span>

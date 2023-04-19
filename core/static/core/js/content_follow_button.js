@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let app_name = ''
         if (content_type === 'article') {
             app_name = 'pubedit'
+        } else if (content_type === 'course') {
+            app_name = 'course'
         } else {
             app_name = 'qa'
         }
@@ -41,6 +43,8 @@ function toggleContentButton(element) {
     let app_name = ''
     if (content_type === 'article') {
         app_name = 'pubedit'
+    } else if (content_type === 'course') {
+        app_name = 'course'
     } else {
         app_name = 'qa'
     }
@@ -76,7 +80,7 @@ function toggleContentButton(element) {
                 content_follow_button_text.innerText = 'Follow'
             }
         }).catch((error) => {
-            console.log(error)
+        console.log(error)
     })
 }
 

@@ -209,7 +209,7 @@
                                id="profile-content-type-cousres"
                                autocomplete="off" value="course"/>
                         <label class="btn btn-light btn-lg mx-1"
-                               for="profile-content-type-cousres">0 Courses</label>
+                               for="profile-content-type-cousres">{{ user.course_posted.count }} Courses</label>
 
                         <input type="radio" class="btn-check" name="profile-content-type"
                                id="profile-content-type-following"
@@ -232,6 +232,10 @@
                 {% elif content_type == 'article' %}
                     {% for article in user.article_posted.all %}
                         {% include 'pubedit/article_card.html' with article=article %}
+                    {% endfor %}
+                {% elif content_type == 'course' %}
+                    {% for course in user.course_posted.all %}
+                        {% include 'course/course_card.html' with course=course %}
                     {% endfor %}
                 {% elif content_type == 'following' %}
                     {% include 'account/profile_follow.html' with user=user following_type=following_type %}

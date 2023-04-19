@@ -14,7 +14,7 @@
         </div>
         <div class="col-md-3">
             <button type="button" class="btn btn-primary"
-                    onclick="sendComment(this, '{{ content.content_type_str }}', {{ content.id }}, {{ user.id }})">Add comment
+                    onclick="sendComment(this, '{{ content.content_type_str }}', {{ content.id }}, {{ request.user.id }})">Add comment
             </button>
         </div>
     </div>
