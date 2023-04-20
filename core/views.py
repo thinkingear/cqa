@@ -5,8 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import User
-from .models import Vote, Comment, ContentViewd
-from django.utils import timezone
+from .models import Vote, Comment, ContentViewd, Tag
 from pubedit.models import Article
 from qa.models import Answer, Question
 from course.models import Course
@@ -193,6 +192,40 @@ def content_follow(request, content_model_type_str, content_follower_model_type_
                     follower=follower,
                 )
             return JsonResponse({'count': content.followers.count(), 'status': 'followed'})
+
+
+'''
+params:
+    content_id(1, 2, ..., n)
+    content_type(question, article)
+    tag_name
+
+method:
+    GET(HTML Django Template)
+    DELETE
+    POST
+'''
+
+
+def tags_handler(request, Content, ContentTag):
+    content_id = request.POST.get('content_id')
+    content = Content.objects.get(id=content_id)
+
+    tag_names = request.POST.getlist('tags[]')
+    tag_names = [tag.lower() for tag in tag_names]
+
+    ContentTag.objects.filter(
+        **{Content.get_content_type_str(): content}
+    ).delete()
+
+    for tag_name in tag_names:
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        ContentTag.objects.create(
+            **{Content.get_content_type_str(): content},
+            tag=tag,
+        )
+
+    return JsonResponse({'status': 'error'})
 
 
 @csrf_exempt

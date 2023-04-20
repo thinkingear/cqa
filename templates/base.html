@@ -67,6 +67,9 @@ https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js
 
 </script>
 <script src="{% static 'core/js/core.js' %}"></script>
-
+  <script type="module">
+    import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
+    Tags.init("select");
+  </script>
 </body>
 </html>

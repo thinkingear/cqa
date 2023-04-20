@@ -1,8 +1,11 @@
 {% load static %}
 
 <div class="card">
+    <!-- tags -->
+    {% include 'core/tags.html' with content=question %}
+
     <!-- question title -->
-    <div class="row">
+    <div class="row mt-2">
         <a href="{% url 'qa:question_detail' question.id %}" onclick="service.get('/history/', {
             params: {
                 content_type: '{{ question.content_type_str }}',

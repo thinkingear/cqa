@@ -3,11 +3,10 @@
 
 <div class="card">
     {% if show_question %}
-        <div class="row">
+        <div class="row mt-2">
             <a href="{% url 'qa:question_detail' answer.question.id %}"><h3>{{ answer.question.title }}</h3></a>
         </div>
     {% endif %}
-
 
     <!-- answerer info -->
     <div class="row mt-2">

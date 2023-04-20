@@ -1,0 +1,42 @@
+{% if content.tags.all.count != 0 or content.poster == request.user %}
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'core/css/tags.css' %}">
+
+    <div class="row mb-3 g-3">
+        <div class="col">
+            <form class="tags-form" data-content-type="{{ content.content_type_str }}"
+                  data-content-id="{{ content.id }}">
+                <div class="row">
+                    <div class="col">
+                        <select class="form-select" name="tags[]" multiple
+                                data-allow-new="{% if content.poster == request.user %}true{% else %}false{% endif %}"
+                                data-add-on-blur="true" data-maximum-items="10"
+                                data-separator=" |,|  ">
+                            <option value="">Type a tag...</option>
+                            <!-- you need at least one option with the placeholder -->
+                            {% for tag in content.tags.all %}
+                                    <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row my-1">
+                    <div class="col-md-8">
+                        {% if content.poster == request.user %}
+                            <button type="reset" class="btn btn-light btn-sm tags-reset">
+                                <i class="fa-solid fa-rotate-right fa-flip-horizontal"></i>
+                            </button>
+                            <button class="btn btn-success btn-sm tags-confirm" type="button"
+                                    onclick="toggleTagsConfirmButton(this)"><i class="fa-solid fa-check"></i></button>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'core/js/tags.js' %}"></script>
+{% endif %}

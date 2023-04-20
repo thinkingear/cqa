@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
-from .forms import QuestionForm, AnswerForm
-from .models import Question, Answer, QuestionFollower, AnswerFollower
-from core.views import content_follow
+from .forms import AnswerForm
+from .models import Question, QuestionTag
+from core.views import content_follow, tags_handler
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
@@ -49,3 +49,8 @@ def question_follow(request):
 @csrf_exempt
 def answer_follow(request):
     return content_follow(request, 'answer', 'answerfollower')
+
+
+@csrf_exempt
+def question_tags_handler(request):
+    return tags_handler(request, Question, QuestionTag)

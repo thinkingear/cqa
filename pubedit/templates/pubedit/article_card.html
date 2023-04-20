@@ -2,8 +2,10 @@
 <link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
 
 <div class="card">
+    <!-- tags -->
+    {% include 'core/tags.html' with content=article %}
     <!-- article title -->
-    <div class="row mt-1">
+    <div class="row mt-2">
         <p class="fs-2 fw-bold">{{ article.title }}</p>
     </div>
     <div class="row">
@@ -23,7 +25,8 @@
         </div>
     </div>
     <div class="row my-1">
-        <span class="read-more" onclick="toggleReadMoreButton(this, '{{ article.content_type_str }}', {{ article.id }}, {{ request.user.id }})">...read more</span>
+        <span class="read-more"
+              onclick="toggleReadMoreButton(this, '{{ article.content_type_str }}', {{ article.id }}, {{ request.user.id }})">...read more</span>
         <span class="collapse-content" onclick="toggleCollapseButton(this)" style="display: none;">...collapse</span>
     </div>
     <!-- article toggle buttons -->

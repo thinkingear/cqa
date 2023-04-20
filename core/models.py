@@ -15,6 +15,11 @@ class Content(models.Model):
     class Meta:
         abstract = True
 
+    @classmethod
+    def get_content_type_str(cls):
+        content_type = ContentType.objects.get_for_model(cls)
+        return content_type.model
+
     @property
     def content_type_object(self):
         return ContentType.objects.get_for_model(self.__class__)
@@ -94,3 +99,10 @@ class ContentViewd(models.Model):
     content_object = GenericForeignKey('content_type', 'content_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+
+    def __str__(self):
+        return self.name
