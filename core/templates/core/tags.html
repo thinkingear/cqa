@@ -13,7 +13,7 @@
                         <select class="form-select" name="tags[]" multiple
                                 data-allow-new="{% if content.poster == request.user %}true{% else %}false{% endif %}"
                                 data-add-on-blur="true" data-maximum-items="10"
-                                data-separator=" |,|  ">
+                                data-separator="|,|">
                             <option value="">Type a tag...</option>
                             <!-- you need at least one option with the placeholder -->
                             {% for tag in content.tags.all %}

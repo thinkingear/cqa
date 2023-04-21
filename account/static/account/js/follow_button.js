@@ -55,9 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 follow_button.innerHTML = '<i class="fa-solid fa-user-plus"></i> Follow'
                 follow_button.classList.remove('btn-secondary')
                 follow_button.classList.add('btn-outline-primary')
+            } else if (status === 'error') {
+                follow_button.innerHTML = '<i class="fa-solid fa-user-plus"></i> Follow'
+                follow_button.classList.remove('btn-secondary')
+                follow_button.classList.add('btn-outline-primary')
+                follow_button.classList.add('disabled')
+                console.log('user need to login')
             }
         }).catch((error) => {
-
+            console.log(error)
         })
     })
 })

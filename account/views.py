@@ -130,6 +130,10 @@ def follow(request):
         folllowed_id = request.GET.get('followed_id')
         followed = User.objects.get(id=folllowed_id)
         follower_id = request.GET.get('follower_id')
+
+        if follower_id is None or follower_id == 'None':
+            return JsonResponse({'status': 'error'})
+
         follower = User.objects.get(id=follower_id)
 
         relationship = AccountFollower.objects.filter(

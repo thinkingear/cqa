@@ -73,6 +73,7 @@ class Vote(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
     content_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey('content_type', 'content_id')
+    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
@@ -99,6 +100,7 @@ class ContentViewd(models.Model):
     content_object = GenericForeignKey('content_type', 'content_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class Tag(models.Model):

@@ -1,5 +1,3 @@
-
-
 // 获取筛选表单和表单元素
 const searchFilterForm = document.getElementById('search-filter-form');
 const searchContentTypeInputs = searchFilterForm.elements['search-content-type'];
@@ -49,5 +47,38 @@ function updateSearchFilters() {
     }
 
     // 跳转到新的 URL
+    window.location.href = `${window.location.pathname}?${queryParams.toString()}`;
+}
+
+
+function setSortedBy() {
+    const queryParams = new URLSearchParams(window.location.search);
+
+    if (queryParams.get('type') === 'course' && queryParams.get('sort') !== 'latest') {
+        queryParams.set('sort', 'latest');
+        window.location.href = `${window.location.pathname}?${queryParams.toString()}`;
+        return;
+    }
+
+    const sortedByForm = document.querySelector("#sorted-by-form");
+
+    sortedByForm.elements['sort-by'].value = queryParams.get('sort');
+}
+
+document.addEventListener('DOMContentLoaded', setSortedBy);
+
+function updateSortedBy(element) {
+    const sortedByForm = document.querySelector("#sorted-by-form");
+
+    const sortedBy = sortedByForm.elements['sort-by'].value;
+
+    const queryParams = new URLSearchParams(window.location.search);
+
+    const querySortedBy = queryParams.get('sort');
+
+    if (querySortedBy !== sortedBy) {
+        queryParams.set('sort', sortedBy);
+    }
+
     window.location.href = `${window.location.pathname}?${queryParams.toString()}`;
 }

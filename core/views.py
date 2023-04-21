@@ -1,5 +1,8 @@
+from qa.recommendations.question import get_top_n_recommend_questions_for_user
+from qa.recommendations.answer import get_top_n_recommend_answers_for_user
+from pubedit.recommendations.article import get_top_n_recommend_articles_for_user
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -48,6 +51,9 @@ def comment(request):
 def vote(request):
     if request.method == 'GET':
         voter_id = request.GET.get('user_id')
+        if voter_id is None or voter_id == 'None':
+            return JsonResponse({"vote": 0})
+
         voter = User.objects.get(id=voter_id)
         content_type_str = request.GET.get('content_type')
         content_id = request.GET.get('content_id')
@@ -87,29 +93,49 @@ def vote(request):
 
 def search_page(request):
     q = request.GET.get('q', '')
-    content_type = request.GET.get('type', '')
-    content_type = content_type if content_type != '' else 'question'
-    time_filter = request.GET.get('time', '')
-    time_filter = time_filter if time_filter != '' else 'all'
+    content_type_old = request.GET.get('type', '')
+    time_filter_old = request.GET.get('time', '')
+    sorted_by_old = request.GET.get('sort', '')
+
+    content_type = content_type_old if content_type_old != '' else 'question'
+    time_filter = time_filter_old if time_filter_old != '' else 'all'
+    sorted_by = sorted_by_old if sorted_by_old != '' else 'recommend'
+
+    if content_type_old == '' or time_filter_old == '' or sorted_by_old == '':
+        if content_type != 'course':
+            new_url = reverse('core:search') + f"?q={q}&type={content_type}&time={time_filter}&sort={sorted_by}"
+        else:
+            new_url = reverse('core:search') + f"?q={q}&type={content_type}&time={time_filter}"
+
+        return redirect(new_url)
 
     contents = []
 
     if content_type == 'question':
-        contents += Question.objects.filter(
-            Q(poster__username__icontains=q) |
-            Q(title__icontains=q)
-        )
+        if request.user.is_authenticated and sorted_by == 'recommend':
+            contents += get_top_n_recommend_questions_for_user(request.user)
+        else:
+            contents += Question.objects.filter(
+                Q(poster__username__icontains=q) |
+                Q(title__icontains=q)
+            )
     elif content_type == 'article':
-        contents += Article.objects.filter(
-            Q(poster__username__icontains=q) |
-            Q(title__icontains=q) |
-            Q(feed__icontains=q)
-        )
+        if request.user.is_authenticated and sorted_by == 'recommend':
+            contents += get_top_n_recommend_articles_for_user(request.user)
+        else:
+            contents += Article.objects.filter(
+                Q(poster__username__icontains=q) |
+                Q(title__icontains=q) |
+                Q(feed__icontains=q)
+            )
     elif content_type == 'answer':
-        contents += Answer.objects.filter(
-            Q(poster__username__icontains=q) |
-            Q(feed__icontains=q)
-        )
+        if request.user.is_authenticated and sorted_by == 'recommend':
+            contents += get_top_n_recommend_answers_for_user(request.user)
+        else:
+            contents += Answer.objects.filter(
+                Q(poster__username__icontains=q) |
+                Q(feed__icontains=q)
+            )
     elif content_type == 'course':
         contents += Course.objects.filter(
             Q(poster__username__icontains=q) |
@@ -133,6 +159,12 @@ def search_page(request):
         contents = [content for content in contents if content.updated >= time_threshold]
 
     context = {'search_query': q, 'contents': contents}
+
+    if content_type == 'course' or not request.user.is_authenticated:
+        context['show_recommend'] = False
+    else:
+        context['show_recommend'] = True
+
     return render(request, 'core/search.html', context)
 
 
@@ -146,6 +178,9 @@ def content_follow(request, content_model_type_str, content_follower_model_type_
     if request.method == 'GET':
         content_id = request.GET.get('content_id')
         follower_id = request.GET.get('follower_id')
+
+        if follower_id is None or follower_id == 'None':
+            return JsonResponse({'status': 'error'})
 
         content = content_model.objects.get(id=content_id)
         follower = User.objects.get(id=follower_id)
@@ -212,7 +247,7 @@ def tags_handler(request, Content, ContentTag):
     content = Content.objects.get(id=content_id)
 
     tag_names = request.POST.getlist('tags[]')
-    tag_names = [tag.lower() for tag in tag_names]
+    tag_names = [' '.join(tag.lower().strip().split()) for tag in tag_names]
 
     ContentTag.objects.filter(
         **{Content.get_content_type_str(): content}

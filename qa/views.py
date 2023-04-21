@@ -3,13 +3,19 @@ from .forms import AnswerForm
 from .models import Question, QuestionTag
 from core.views import content_follow, tags_handler
 from django.views.decorators.csrf import csrf_exempt
+import re
 # Create your views here.
 
 
 def question_create_page(request):
     if request.method == 'POST':
+        title = request.POST.get('title')
+        if not title.endswith('?'):
+            title += '?'
+        title = re.sub(r'\?+$', '?', title)
+
         Question.objects.create(
-            title=request.POST.get('title'),
+            title=title,
             poster=request.user,
         )
         return redirect('core:home')

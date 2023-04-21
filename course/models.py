@@ -18,6 +18,9 @@ class Course(Content):
     )
     followers = models.ManyToManyField(User, through='CourseFollower', related_name='followed_courses')
 
+    class Meta:
+        ordering = ['-updated', '-created']
+
     def __str__(self):
         return self.title
 
@@ -107,6 +110,7 @@ class Video(Content):
 class CourseFollower(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     follower = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

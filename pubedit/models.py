@@ -20,10 +20,14 @@ class Article(Content):
     def get_tag_relation_model(cls):
         return ArticleTag
 
+    class Meta:
+        ordering = ['-updated', '-created']
+
 
 class ArticleFollower(models.Model):
     article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE)
     follower = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

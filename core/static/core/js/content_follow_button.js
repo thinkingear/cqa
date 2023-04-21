@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 content_follow_button.classList.remove('btn-light')
                 content_follow_button.classList.add('btn-dark')
                 content_follow_button_text.innerText = 'Following'
+            } else if (status === 'error') {
+                content_follow_button.classList.remove('btn-dark')
+                content_follow_button.classList.add('btn-light')
+                content_follow_button.classList.add('disabled')
+                content_follow_button_text.innerText = 'Follow'
             }
         }).catch((error) => {
             console.log(error)

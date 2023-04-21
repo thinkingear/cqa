@@ -33,6 +33,14 @@ function toggleTagsConfirmButton(element) {
 }
 
 
+// function closeTagConfirmButton(element) {
+//
+// }
+//
+// function showTagConfirmButton(element) {
+//
+// }
+
 
 
 

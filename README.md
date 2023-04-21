@@ -11,12 +11,16 @@
 9. Course CRUD
 10. Content View Times
 11. Content Tag
+12. Question/Answer/Article Recommendation
 
-### 还未实现的功能
+### 尚未实现的功能
 
-3. qa 推荐系统（紧、难）
-4. pubedit 的 git 功能（紧、难）
-5. qa 接入 LLM（紧）
-4. 工作量还不够就做：Qustion, Answer 和 Article 的删改操作、上传用户头像、视频弹幕、内容审核、历史记录、Merge Question、Topic Space、Mute Topic or Account、消息模块（Follow 更新通知、用户私信、邀请回答、系统通知）。
+2. qa 接入 LLM
+2. ★ pubedit 的 git 功能
+3. ★ 消息模块（Follow 更新通知、用户私信、邀请回答、系统通知）
+4. 历史记录
+5. ★ 通过结果缓存和定时任务来优化推荐系统性能
+6. 系统完善（Qustion, Answer 和 Article 的删改操作、上传用户头像、用户认证）
+7. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、Topic Space、Mute Topic or Account
 
 

@@ -54,7 +54,43 @@
             </form>
         </div>
         <!-- content -->
-        <div class="col-md-7">
+        <div class="col-md-8">
+            <div class="row mt-2">
+
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <!-- Container wrapper -->
+                    <div class="container">
+                        <!-- Navbar brand -->
+                        <span class="navbar-brand me-2">
+                            Sorted by
+                        </span>
+
+                        <!-- Collapsible wrapper -->
+                        <div class="collapse navbar-collapse">
+                            <div class="d-flex align-items-center">
+                                <form id="sorted-by-form">
+                                    {% if show_recommend %}
+                                    <input type="radio" class="btn-check" data-mdb-ripple-color="dark"
+                                           id="sort-by-recommend" name="sort-by" autocomplete="off" value="recommend"
+                                           onchange="updateSortedBy()"/>
+                                    <label class="btn btn-light" for="sort-by-recommend">Recommend</label>
+                                    {% endif %}
+                                    <input type="radio" class="btn-check" data-mdb-ripple-color="dark"
+                                           id="sort-by-latest"
+                                           name="sort-by" autocomplete="off" value="latest"
+                                           onchange="updateSortedBy()"/>
+                                    <label class="btn btn-light" for="sort-by-latest">Latest</label>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Collapsible wrapper -->
+                    </div>
+                    <!-- Container wrapper -->
+                </nav>
+                <!-- Navbar -->
+            </div>
+
             {% for content in contents %}
                 <div class="row mt-3">
                     {% if content.content_type_str == 'question' %}
