@@ -179,8 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch((error) => {
-                console.error(error);
-                const errorMessage = createMessageBubble('request failed', 'ai');
+                console.log(error);
+                const errorMessage = createMessageBubble('<strong>request failed</strong>', 'ai');
                 chatBox.appendChild(errorMessage);
             })
             .finally(() => {

@@ -9,7 +9,6 @@ from tinymce.models import HTMLField
 class Article(Content):
     title = models.CharField(max_length=128, null=False, blank=False)
     followers = models.ManyToManyField(User, through='ArticleFollower', related_name='followed_articles')
-    feed = HTMLField(null=True, blank=True)
     views = models.PositiveIntegerField(default=0)
     tags = models.ManyToManyField(Tag, through='ArticleTag', related_name='tagged_articles')
 
@@ -20,8 +19,24 @@ class Article(Content):
     def get_tag_relation_model(cls):
         return ArticleTag
 
+    @property
+    def feed(self):
+        latest_feed = self.feeds.order_by('-created').first()
+        if latest_feed is None:
+            return ''
+        else:
+            return latest_feed.feed
+
     class Meta:
         ordering = ['-updated', '-created']
+
+
+class ArticleFeed(Content):
+    article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE, related_name='feeds')
+    parent = models.ForeignKey('pubedit.ArticleFeed', on_delete=models.SET_NULL, null=True, related_name='child')
+    is_initial = models.BooleanField(default=False)
+    feed = HTMLField(null=True, blank=True)
+    comment = models.TextField(null=True, blank=True)
 
 
 class ArticleFollower(models.Model):

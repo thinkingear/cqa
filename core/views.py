@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import User
 from .models import Vote, Comment, ContentViewd, Tag
-from pubedit.models import Article
+from pubedit.models import Article, ArticleFeed
 from qa.models import Answer, Question
 from course.models import Course
 from datetime import timedelta
@@ -123,11 +123,12 @@ def search_page(request):
         if request.user.is_authenticated and sorted_by == 'recommend':
             contents += get_top_n_recommend_articles_for_user(request.user)
         else:
-            contents += Article.objects.filter(
-                Q(poster__username__icontains=q) |
-                Q(title__icontains=q) |
+            article_feeds = ArticleFeed.objects.filter(
+                Q(article__poster__username__icontains=q) |
+                Q(article__title__icontains=q) |
                 Q(feed__icontains=q)
             )
+            contents += [article_feed.article for article_feed in article_feeds]
     elif content_type == 'answer':
         if request.user.is_authenticated and sorted_by == 'recommend':
             contents += get_top_n_recommend_answers_for_user(request.user)
