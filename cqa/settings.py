@@ -11,9 +11,24 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 加载 .env 文件
+dotenv_path = os.path.join(BASE_DIR, '.env')
+load_dotenv(dotenv_path)
+
+# 从 .env 文件中读取私钥
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+PROFANITY_LIST = []
+with open(os.path.join(BASE_DIR, 'profanity_list_file.txt'), "r", encoding="utf-8") as f:
+    for line in f.readlines():
+        line = line.strip()
+        if line:
+            PROFANITY_LIST.append(line)
 
 # media root
 MEDIA_ROOT = BASE_DIR / 'media'

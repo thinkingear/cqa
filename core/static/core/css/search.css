@@ -1,0 +1,16 @@
+.chat-box {
+    max-height: 324px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+}
+
+.chat-message.question {
+    font-weight: bold;
+}
+
+.chat-message.answer {
+    font-style: italic;
+}

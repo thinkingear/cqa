@@ -10,4 +10,5 @@ urlpatterns = [
     path('question/follow/', views.question_follow, name='question_follow'),
     path('answer/follow/', views.answer_follow, name='answer_follow'),
     path('question/tag/', views.question_tags_handler, name='question_tags_handler'),
+    path('question/ai/', views.generate_answer, name='generate_answer_for_question'),
 ]

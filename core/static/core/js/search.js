@@ -82,3 +82,119 @@ function updateSortedBy(element) {
 
     window.location.href = `${window.location.pathname}?${queryParams.toString()}`;
 }
+
+// submit-question
+async function submit_question() {
+    const questionInput = document.getElementById("question-input");
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const responseMessage = document.getElementById("response-message");
+
+    if (!questionInput.value.trim()) {
+        responseMessage.innerHTML = '<div class="alert alert-danger">请输入问题。</div>';
+        return;
+    }
+
+    responseMessage.innerHTML = '';
+    loadingSpinner.classList.remove("d-none");
+
+    try {
+        const response = await service.post("/qa/question/ai/", {
+            question: questionInput.value
+        });
+
+        if (response.data.status === "success") {
+            responseMessage.innerHTML = `<div class="alert alert-success">A: ${response.data.answer}</div>`;
+        } else {
+            responseMessage.innerHTML = `<div class="alert alert-danger">Error：${response.data.message}</div>`;
+        }
+    } catch (error) {
+        responseMessage.innerHTML = '<div class="alert alert-danger">Request failed</div>';
+    } finally {
+        loadingSpinner.classList.add("d-none");
+    }
+}
+
+
+function scrollToBottom(element) {
+    element.scrollTop = element.scrollHeight;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const chatBox = document.getElementById('chatBox');
+    const loadingSpinner = document.getElementById("loading-spinner");
+
+    function createMessageBubble(content, sender) {
+        // const bubble = document.createElement('div');
+        // bubble.textContent = content;
+        // bubble.style.backgroundColor = bgColor;
+        // bubble.style.padding = '10px';
+        // bubble.style.borderRadius = '5px';
+        // bubble.style.marginBottom = '10px';
+        // bubble.style.display = 'inline-block';
+        // bubble.style.textAlign = align;
+        // return bubble;
+
+        const messageBubble = document.createElement('div');
+        if (sender === 'ai') {
+            messageBubble.classList.add("d-flex", "flex-row", "justify-content-start", "mb-4");
+            messageBubble.innerHTML =
+            `<div class="p-3 me-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);">
+                <p class="small mb-0">${content}</p>
+             </div>`
+        } else {
+            messageBubble.classList.add("d-flex", "flex-row", "justify-content-end", "mb-4");
+            messageBubble.innerHTML =
+            `<div class="p-3 ms-3 border" style="border-radius: 15px; background-color: #fbfbfb;">
+                <p class="small mb-0">${content}</p>
+             </div>`
+        }
+
+
+
+        return messageBubble;
+    }
+
+
+    document.getElementById('question-input-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const question_input = document.getElementById('question-input').value.trim();
+
+        if (question_input.length === 0) {
+            return;
+        }
+
+        const questionBubble = createMessageBubble(question_input, 'user');
+        chatBox.appendChild(questionBubble);
+
+        loadingSpinner.classList.remove("d-none");
+
+
+        service.post('/qa/question/ai/', {question: question_input})
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    const answer = response.data.answer;
+                    const answerBubble = createMessageBubble(answer, 'ai');
+                    chatBox.appendChild(answerBubble);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                const errorMessage = createMessageBubble('request failed', 'ai');
+                chatBox.appendChild(errorMessage);
+            })
+            .finally(() => {
+                loadingSpinner.classList.add("d-none");
+            });
+
+        scrollToBottom(chatBox);
+
+        document.getElementById('question-input').value = '';
+    });
+});
+
+function destroyAIAssistantRow() {
+    const aiAssistantRow = document.querySelector('#ai-assistant-row');
+    aiAssistantRow.remove();
+}
+

@@ -7,3 +7,5 @@ media/avatars/*png
 media/thumbnails/*png
 media/thumbnails/*jpg
 media/videos/*mp4
+.env
+profanity_list_file.txt

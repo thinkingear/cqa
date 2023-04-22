@@ -3,60 +3,107 @@
 {% block content %}
 
     {% load static %}
+
+    <link rel="stylesheet" href="{% static 'core/css/search.css' %}">
+
     <div class="row">
-        <!-- form filter -->
         <div class="col-md-3 mt-3">
-            <form id="search-filter-form">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-header px-3 text-center"><span><strong>By type</strong></span></div>
-                    <div class="btn-group-vertical my-1" role="group" aria-label="Vertical button group">
-                        <input type="radio" class="btn-check" name="search-content-type"
-                               id="search-content-type-question"
-                               autocomplete="off" value="question"/>
-                        <label class="btn btn-light" for="search-content-type-question">Questions</label>
+            <!-- form filter -->
+            <div class="row">
+                <div class="col">
+                    <form id="search-filter-form">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-header px-3 text-center"><span><strong>By type</strong></span></div>
+                            <div class="btn-group-vertical my-1" role="group" aria-label="Vertical button group">
+                                <input type="radio" class="btn-check" name="search-content-type"
+                                       id="search-content-type-question"
+                                       autocomplete="off" value="question"/>
+                                <label class="btn btn-light" for="search-content-type-question">Questions</label>
 
-                        <input type="radio" class="btn-check" name="search-content-type" id="search-content-type-answer"
-                               autocomplete="off" value="answer"/>
-                        <label class="btn btn-light" for="search-content-type-answer">Answer</label>
+                                <input type="radio" class="btn-check" name="search-content-type"
+                                       id="search-content-type-answer"
+                                       autocomplete="off" value="answer"/>
+                                <label class="btn btn-light" for="search-content-type-answer">Answer</label>
 
-                        <input type="radio" class="btn-check" name="search-content-type"
-                               id="search-content-type-article"
-                               autocomplete="off" value="article"/>
-                        <label class="btn btn-light" for="search-content-type-article">Articles</label>
+                                <input type="radio" class="btn-check" name="search-content-type"
+                                       id="search-content-type-article"
+                                       autocomplete="off" value="article"/>
+                                <label class="btn btn-light" for="search-content-type-article">Articles</label>
 
-                        <input type="radio" class="btn-check" name="search-content-type"
-                               id="search-content-type-course"
-                               autocomplete="off" value="course"/>
-                        <label class="btn btn-light" for="search-content-type-course">Courses</label>
-                    </div>
+                                <input type="radio" class="btn-check" name="search-content-type"
+                                       id="search-content-type-course"
+                                       autocomplete="off" value="course"/>
+                                <label class="btn btn-light" for="search-content-type-course">Courses</label>
+                            </div>
 
 
-                    <div class="card-header px-3 text-center"><span><strong>By time</strong></span></div>
-                    <div class="btn-group-vertical mt-1" role="group" aria-label="Vertical button group">
-                        <input type="radio" class="btn-check" name="search-time" id="search-time-all-time"
-                               autocomplete="off" value="all"/>
-                        <label class="btn btn-light" for="search-time-all-time">All time</label>
+                            <div class="card-header px-3 text-center"><span><strong>By time</strong></span></div>
+                            <div class="btn-group-vertical mt-1" role="group" aria-label="Vertical button group">
+                                <input type="radio" class="btn-check" name="search-time" id="search-time-all-time"
+                                       autocomplete="off" value="all"/>
+                                <label class="btn btn-light" for="search-time-all-time">All time</label>
 
-                        <input type="radio" class="btn-check" name="search-time" id="search-time-last-24-hours"
-                               autocomplete="off" value="hour"/>
-                        <label class="btn btn-light" for="search-time-last-24-hours">Last 24 hours</label>
+                                <input type="radio" class="btn-check" name="search-time" id="search-time-last-24-hours"
+                                       autocomplete="off" value="hour"/>
+                                <label class="btn btn-light" for="search-time-last-24-hours">Last 24 hours</label>
 
-                        <input type="radio" class="btn-check" name="search-time" id="search-time-last-7-days"
-                               autocomplete="off" value="week"/>
-                        <label class="btn btn-light" for="search-time-last-7-days">Last 7 days</label>
+                                <input type="radio" class="btn-check" name="search-time" id="search-time-last-7-days"
+                                       autocomplete="off" value="week"/>
+                                <label class="btn btn-light" for="search-time-last-7-days">Last 7 days</label>
 
-                        <input type="radio" class="btn-check" name="search-time" id="search-time-last-30-days"
-                               autocomplete="off" value="month"/>
-                        <label class="btn btn-light" for="search-time-last-30-days">Last 30 days</label>
-                    </div>
+                                <input type="radio" class="btn-check" name="search-time" id="search-time-last-30-days"
+                                       autocomplete="off" value="month"/>
+                                <label class="btn btn-light" for="search-time-last-30-days">Last 30 days</label>
+                            </div>
 
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+            <!-- Q&A window -->
+            <div class="row" id="ai-assistant-row">
+                <div class="col">
+                    <div class="container mt-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <h5 class="mb-0">AI assistant</h5>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-link btn-sm p-0 text-muted"
+                                            onclick="destroyAIAssistantRow()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chat-box scrollbar scrollbar-light" id="chatBox"
+                                     style="max-height: 250px; overflow-y: auto;">
+                                    <!-- Chat messages will be added here -->
+
+
+                                </div>
+                                <div id="loading-spinner" class="spinner-border text-primary d-none mt-3" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <form id="question-input-form" class="d-flex">
+                                    <input type="text" class="form-control" id="question-input"
+                                           placeholder="Ask me anything...">
+                                    <button type="submit" class="btn btn-primary ms-2">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- content -->
         <div class="col-md-8">
             <div class="row mt-2">
-
                 <!-- Navbar -->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
                     <!-- Container wrapper -->
@@ -71,10 +118,11 @@
                             <div class="d-flex align-items-center">
                                 <form id="sorted-by-form">
                                     {% if show_recommend %}
-                                    <input type="radio" class="btn-check" data-mdb-ripple-color="dark"
-                                           id="sort-by-recommend" name="sort-by" autocomplete="off" value="recommend"
-                                           onchange="updateSortedBy()"/>
-                                    <label class="btn btn-light" for="sort-by-recommend">Recommend</label>
+                                        <input type="radio" class="btn-check" data-mdb-ripple-color="dark"
+                                               id="sort-by-recommend" name="sort-by" autocomplete="off"
+                                               value="recommend"
+                                               onchange="updateSortedBy()"/>
+                                        <label class="btn btn-light" for="sort-by-recommend">Recommend</label>
                                     {% endif %}
                                     <input type="radio" class="btn-check" data-mdb-ripple-color="dark"
                                            id="sort-by-latest"
