@@ -124,16 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadingSpinner = document.getElementById("loading-spinner");
 
     function createMessageBubble(content, sender) {
-        // const bubble = document.createElement('div');
-        // bubble.textContent = content;
-        // bubble.style.backgroundColor = bgColor;
-        // bubble.style.padding = '10px';
-        // bubble.style.borderRadius = '5px';
-        // bubble.style.marginBottom = '10px';
-        // bubble.style.display = 'inline-block';
-        // bubble.style.textAlign = align;
-        // return bubble;
-
         const messageBubble = document.createElement('div');
         if (sender === 'ai') {
             messageBubble.classList.add("d-flex", "flex-row", "justify-content-start", "mb-4");

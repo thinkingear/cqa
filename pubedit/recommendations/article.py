@@ -6,11 +6,10 @@ from pubedit.models import Article, ArticleFollower
 from core.models import Vote, ContentViewd
 from datetime import datetime
 from account.models import User, AccountFollower
-from bs4 import BeautifulSoup
 
 
 def get_article_text(article):
-    return article.title + ' ' + ','.join([tag.name for tag in article.tags.all()]) + ' ' + BeautifulSoup(article.feed, 'html.parser').get_text()
+    return article.title + ' ' + ','.join([tag.name for tag in article.tags.all()]) + ' ' + article.feed, 'html.parser'
 
 
 # 获取系统中所有问题文本之间的相似度 DataFrame

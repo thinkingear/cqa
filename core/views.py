@@ -14,6 +14,8 @@ from qa.models import Answer, Question
 from course.models import Course
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import OuterRef, Subquery
+
 # Create your views here.
 
 
@@ -123,12 +125,26 @@ def search_page(request):
         if request.user.is_authenticated and sorted_by == 'recommend':
             contents += get_top_n_recommend_articles_for_user(request.user)
         else:
-            article_feeds = ArticleFeed.objects.filter(
-                Q(article__poster__username__icontains=q) |
-                Q(article__title__icontains=q) |
-                Q(feed__icontains=q)
-            )
-            contents += [article_feed.article for article_feed in article_feeds]
+            # 创建一个子查询，以获取每个文章的最新 ArticleFeed
+            latest_feeds = ArticleFeed.objects.filter(
+                article=OuterRef('pk')
+            ).order_by('-created')
+
+            # 查找 title 包含 q 的文章
+            title_query = Q(title__icontains=q)
+
+            # 查找 poster.usernmae 包含 q 的文章
+            username_query = Q(poster__username__icontains=q)
+
+            # 查找最新 ArticleFeed 的 feed 包含 q 的文章
+            latest_feed_query = Q(feeds__pk=Subquery(latest_feeds.values('pk')[:1]), feeds__feed__icontains=q)
+
+            # 使用 Q 对象连接这两个查询
+            query = title_query | latest_feed_query | username_query
+
+            # 应用查询并确保没有重复的文章
+            contents += Article.objects.filter(query).distinct()
+
     elif content_type == 'answer':
         if request.user.is_authenticated and sorted_by == 'recommend':
             contents += get_top_n_recommend_answers_for_user(request.user)

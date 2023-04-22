@@ -19,8 +19,7 @@
 
 1. ★ 消息模块（Follow 更新通知、用户私信、邀请回答、Pull Request）
 2. ★ 通过结果缓存和定时任务来优化推荐系统性能
-3. 历史记录
-4. 系统完善（Qustion, Answer 和 Article 的删改操作、上传用户头像、用户认证、使用 npm 管理前端包）
-5. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、Topic Space、Mute Topic or Account
+3. 系统完善（Qustion, Answer 和 Article 的删改操作、上传用户头像、历史记录、用户认证、前端推荐按钮和 url 的显示 bug、使用 npm 管理前端包）
+4. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、Topic Space、Mute Topic or Account、使用富文本编辑器编辑 Article 内容
 
 

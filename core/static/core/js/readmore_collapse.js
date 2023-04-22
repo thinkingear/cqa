@@ -22,11 +22,34 @@ function toggleReadMoreButton(element, content_type, content_id, user_id) {
     })
 }
 
+
+function toggleReadMoreButtonSimple(element) {
+    const contentContent = findAncestorWithClass(element, '.content-content');
+    const readMore = findAncestorWithClass(element, '.read-more');
+    const collapseContent = findAncestorWithClass(element, '.collapse-content');
+
+
+    // const row = element.parentElement;
+    // const contentContent = row.previousElementSibling.querySelector('.content-content');
+    // const readMore = row.querySelector('.read-more');
+    // const collapseContent = row.querySelector('.collapse-content');
+
+    contentContent.style.maxHeight = 'none';
+    readMore.style.display = 'none';
+    collapseContent.style.display = '';
+}
+
+
 function toggleCollapseButton(element) {
-    const row = element.parentElement;
-    const contentContent = row.previousElementSibling.querySelector('.content-content');
-    const readMore = row.querySelector('.read-more');
-    const collapseContent = row.querySelector('.collapse-content');
+    const contentContent = findAncestorWithClass(element, '.content-content');
+    const readMore = findAncestorWithClass(element, '.read-more');
+    const collapseContent = findAncestorWithClass(element, '.collapse-content');
+
+    //
+    // const row = element.parentElement;
+    // const contentContent = row.previousElementSibling.querySelector('.content-content');
+    // const readMore = row.querySelector('.read-more');
+    // const collapseContent = row.querySelector('.collapse-content');
 
     contentContent.style.maxHeight = '5rem'; // 根据需要调整高度
     readMore.style.display = '';

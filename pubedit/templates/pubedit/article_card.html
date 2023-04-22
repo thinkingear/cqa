@@ -20,7 +20,7 @@
     <div class="row mb-1">
         <div class="d-flex align-items-center justify-content-center">
             <div class="content-content">
-                {{ article.feed|safe }}
+                {{ article.feed }}
             </div>
         </div>
     </div>
@@ -31,12 +31,45 @@
     </div>
     <!-- article toggle buttons -->
     <div class="row my-2 article-toggle-bar">
-        <div class="col-md-9">
-            {% include 'core/content_follow_button.html' with content=article %}
-            {% include 'core/vote.html' with content=article %}
+        <div class="col d-flex justify-content-start align-items-center">
+            <!-- follow -->
+            <div class="mx-1">
+                {% include 'core/content_follow_button.html' with content=article %}
+            </div>
+            <!-- vote -->
+            <div class="mx-1">
+                {% include 'core/vote.html' with content=article %}
+            </div>
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-1">
+        <div class="col d-flex justify-content-end align-items-center me-3">
+            <!-- edit/delete button -->
+            <div class="btn-group dropstart" style="box-shadow: none;">
+                <a type="button" class="btn " data-mdb-toggle="dropdown"
+                   aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    {% if article.poster == request.user %}
+                    <li><a class="dropdown-item" href="{% url 'pubedit:article_update' article.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit article</a>
+                    </li>
+                    {% else %}
+                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-code-pull-request"></i> Pull request</a>
+                    </li>
+                    {% endif %}
+
+                    <li><a class="dropdown-item" href="{% url 'pubedit:article_log' article.id %}"><i class="fa-solid fa-list"></i> Log</a>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider"/>
+                    </li>
+                    <li><a class="dropdown-item"
+                           href="{% url 'account:profile' article.poster.id %}"><i
+                            class="fa-solid fa-user-tie"></i> About author</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- comment button -->
             <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)" style="cursor: pointer;"></i>
         </div>
     </div>

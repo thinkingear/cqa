@@ -2,7 +2,6 @@ from django.db import models
 from core.models import Content
 from account.models import User
 from core.models import Content, Tag
-from tinymce.models import HTMLField
 # Create your models here.
 
 
@@ -20,8 +19,12 @@ class Article(Content):
         return ArticleTag
 
     @property
+    def latest_article_feed(self):
+        return self.feeds.order_by('-created').first()
+
+    @property
     def feed(self):
-        latest_feed = self.feeds.order_by('-created').first()
+        latest_feed = self.latest_article_feed
         if latest_feed is None:
             return ''
         else:
@@ -35,8 +38,11 @@ class ArticleFeed(Content):
     article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE, related_name='feeds')
     parent = models.ForeignKey('pubedit.ArticleFeed', on_delete=models.SET_NULL, null=True, related_name='child')
     is_initial = models.BooleanField(default=False)
-    feed = HTMLField(null=True, blank=True)
+    feed = models.TextField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created', '-updated']
 
 
 class ArticleFollower(models.Model):

@@ -11,8 +11,4 @@ class ArticleForm(ModelForm):
 class ArticleFeedForm(ModelForm):
     class Meta:
         model = ArticleFeed
-        fields = ['feed']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['feed'].widget.attrs.update({'class': 'tinymce-editor'})
+        fields = ['feed', 'comment']

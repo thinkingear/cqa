@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    {% load zip_filters %}
+    <link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
+
+    <section>
+        <div class="container py-5">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-9 col-md-9 col-lg-9 col-xl-9">
+                    <div class="card">
+                        <div class="card-header px-3">Article Log</div>
+                        <ul class="list-group list-group-light list-group-large">
+                            {% for article_feed, article_diff_html in combined_data %}
+                                <li class="list-group-item px-3">
+                                    <!-- log poster -->
+                                    <div class="row">
+                                        <div class="col">
+                                            <p class="fs-4">
+                                                <a href="{% url 'core:search' %}?q={{ article.title }}&type=article&sort=latest">Answer</a>
+                                                edited by
+                                                <a href="{% url 'account:profile' article.poster.id %}">{{ article.poster }}</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- log content -->
+                                    <div class="row">
+                                        <div class="col d-flex flex-col justify-content-center my-2">
+                                            <div class="border p-3" style="border-radius: 15px;">
+                                                <div class="mb-0 content-content">
+                                                    {{ article_diff_html | safe }}
+                                                </div>
+                                                <span class="read-more"
+                                                      onclick="toggleReadMoreButtonSimple(this)">...read more</span>
+                                                <span class="collapse-content" onclick="toggleCollapseButton(this)"
+                                                      style="display: none;">...collapse</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- comment -->
+                                    {% if article_feed.comment %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="fw-light">Comment:</div>
+                                            <div class="fw-light">
+                                                {{ article_feed.comment }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <!-- created time -->
+                                    <div class="row mt-2">
+                                        <div class="col d-flex justify-content-start">
+                                            <div class="fw-light">Created at {{ article_feed.created }}</div>
+                                            <div class="mx-2" style="border-left: 1px solid #666;"></div>
+                                            <div class="fw-light">Updated at {{ article_feed.updated }}</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'core/js/readmore_collapse.js' %}"></script>
+
+{% endblock %}
+
