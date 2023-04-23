@@ -58,6 +58,9 @@ def compare_feeds(feed1, feed2):
     # 将差异结果转换为 HTML 格式
     html_diff = dmp.diff_prettyHtml(diffs)
 
+    # 删除 "¶" 字符
+    html_diff = html_diff.replace("&para;", "")
+
     return html_diff
 
 
@@ -65,12 +68,12 @@ def article_log(request, pk):
     article = Article.objects.get(id=pk)
     article_feeds = [article_feed for article_feed in article.feeds.all()]
 
+    article_feeds_with_last_twice = article_feeds + [article_feeds[-1]]
+
     article_diff_htmls = []
 
-    for i in range(1, len(article_feeds), 1):
-        article_diff_htmls.append(compare_feeds(article_feeds[i].feed, article_feeds[i - 1].feed))
-
-    article_diff_htmls += article_feeds[-1].feed
+    for i in range(1, len(article_feeds_with_last_twice), 1):
+        article_diff_htmls.append(compare_feeds(article_feeds_with_last_twice[i - 1].feed, article_feeds_with_last_twice[i].feed))
 
     combined_data = zip(article_feeds, article_diff_htmls)
     context = {'article': article, 'combined_data': combined_data}

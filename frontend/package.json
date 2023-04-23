@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "babel-loader": "^9.1.2",
+    "highlight.js": "^11.7.0",
+    "marked": "^4.3.0",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.2"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.3",
+    "easymde": "^2.18.0",
+    "style-loader": "^3.3.2"
+  }
+}

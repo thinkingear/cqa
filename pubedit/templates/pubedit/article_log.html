@@ -4,7 +4,18 @@
     {% load static %}
     {% load zip_filters %}
     <link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
+    <style>
+        .custom-modal-width {
+            max-width: 1000px;
+        }
 
+        @media (max-width: 768px) {
+            .custom-modal-width {
+                max-width: 90%;
+            }
+        }
+
+    </style>
     <section>
         <div class="container py-5">
             <div class="row d-flex justify-content-center align-items-center">
@@ -16,12 +27,19 @@
                                 <li class="list-group-item px-3">
                                     <!-- log poster -->
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col d-flex justify-content-start align-items-center">
                                             <p class="fs-4">
-                                                <a href="{% url 'core:search' %}?q={{ article.title }}&type=article&sort=latest">Answer</a>
+                                                <a href="{% url 'core:search' %}?q={{ article.title }}&type=article&sort=latest">{{ article.title }}</a>
                                                 edited by
                                                 <a href="{% url 'account:profile' article.poster.id %}">{{ article.poster }}</a>
                                             </p>
+                                        </div>
+                                        <div class="col d-flex justify-content-end align-items-center me-3">
+                                            <button type="button" class="btn btn-outline-success btn-rounded"
+                                                    data-mdb-toggle="modal"
+                                                    data-mdb-target="#article-{{ article.id }}-modal"
+                                                    data-mdb-ripple-color="dark">View preview
+                                            </button>
                                         </div>
                                     </div>
                                     <!-- log content -->
@@ -40,14 +58,14 @@
                                     </div>
                                     <!-- comment -->
                                     {% if article_feed.comment %}
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="fw-light">Comment:</div>
-                                            <div class="fw-light">
-                                                {{ article_feed.comment }}
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="fw-light">Comment:</div>
+                                                <div class="fw-light">
+                                                    {{ article_feed.comment }}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                     <!-- created time -->
                                     <div class="row mt-2">
@@ -55,6 +73,31 @@
                                             <div class="fw-light">Created at {{ article_feed.created }}</div>
                                             <div class="mx-2" style="border-left: 1px solid #666;"></div>
                                             <div class="fw-light">Updated at {{ article_feed.updated }}</div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal -->
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="modal fade" id="article-{{ article.id }}-modal" tabindex="-1"
+                                                 aria-labelledby="article-{{ article.id }}-modal-label"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered custom-modal-width">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="article-{{ article.id }}-modal-label">{{ article.title }}</h5>
+                                                            <button type="button" class="btn-close"
+                                                                    data-mdb-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <!-- markdown text Editor -->
+                                                            <textarea
+                                                                    class="markdown-editor">{{ article.feed }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -66,6 +109,7 @@
         </div>
     </section>
 
+    <script src="{% static 'main.js' %}"></script>
     <script src="{% static 'core/js/readmore_collapse.js' %}"></script>
 
 {% endblock %}

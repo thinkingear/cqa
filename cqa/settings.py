@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import mimetypes
+
+mimetypes.add_type("application/javascript", ".js", True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -156,6 +159,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "qa/static",
     BASE_DIR / "pubedit/static",
     BASE_DIR / "course/static",
+    BASE_DIR / "frontend/dist",
 ]
 
 # Default primary key field type

@@ -6,10 +6,24 @@ from pubedit.models import Article, ArticleFollower
 from core.models import Vote, ContentViewd
 from datetime import datetime
 from account.models import User, AccountFollower
+import re
+import markdown
+
+
+def markdown_to_text(markdown_string):
+    """ 将 Markdown 文本转换为纯文本。 """
+    # 使用 Python 的 `markdown` 库将 Markdown 转换为 HTML
+    html = markdown.markdown(markdown_string)
+
+    # 使用正则表达式删除 HTML 标签
+    html_tag_pattern = re.compile('<.*?>')
+    plain_text = re.sub(html_tag_pattern, '', html)
+
+    return plain_text
 
 
 def get_article_text(article):
-    return article.title + ' ' + ','.join([tag.name for tag in article.tags.all()]) + ' ' + article.feed, 'html.parser'
+    return article.title + ' ' + ','.join([tag.name for tag in article.tags.all()]) + ' ' + markdown_to_text(article.feed)
 
 
 # 获取系统中所有问题文本之间的相似度 DataFrame
@@ -209,7 +223,6 @@ def get_top_n_recommend_articles_for_user(user, top_n=50):
 
     print(f"article_all_similarity_df = \n{article_all_similarity_df}\n")
     print(f"user_all_related_articles_df = \n{user_all_related_articles_df}\n")
-
 
     recommended_articles = recommend_articles_for_user(user.id, article_all_similarity_df, user_all_related_articles_df, top_n=top_n)
 

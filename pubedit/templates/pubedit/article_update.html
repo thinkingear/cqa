@@ -2,6 +2,7 @@
 
 {% block content_backgroud %}
     {% load static %}
+    <link rel="stylesheet" href="{% static 'simplemde/dist/simplemde.min.css' %}">
 
     <div class="card shadow-2-strong" style="border-radius: 1rem;">
         <form class="card-body p-5 text-center"
@@ -17,9 +18,10 @@
                        placeholder='Article Title' value="{{ article_form.title.value }}">
                 <label for="customInput"></label>
             </div>
-            <!-- Rich Text Editor -->
-            {{ article_feed_form.media }}
-            {{ article_feed_form.feed }}
+            <!-- markdown text Editor -->
+            <textarea class="markdown-editor" name="{{ article_feed_form.feed.name }}">
+             {{ article_feed_form.feed.value }}
+            </textarea>
 
             <!-- Update Comment -->
             <div class="my-3">
@@ -43,8 +45,5 @@
         </form>
     </div>
 
-    <script
-            type="text/javascript"
-            src="{% static 'pubedit/js/article_create.js' %}"
-    ></script>
+    <script src="{% static 'main.js' %}"></script>
 {% endblock %}

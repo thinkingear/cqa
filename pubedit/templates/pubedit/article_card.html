@@ -20,7 +20,10 @@
     <div class="row mb-1">
         <div class="d-flex align-items-center justify-content-center">
             <div class="content-content">
-                {{ article.feed }}
+                <div class="markdown-data" style="display: none;">{{ article.feed }}</div>
+                <div class="rendered-markdown">
+                    <!-- 渲染后的 Markdown 将在这里显示 -->
+                </div>
             </div>
         </div>
     </div>
@@ -50,14 +53,16 @@
                 </a>
                 <ul class="dropdown-menu">
                     {% if article.poster == request.user %}
-                    <li><a class="dropdown-item" href="{% url 'pubedit:article_update' article.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit article</a>
-                    </li>
+                        <li><a class="dropdown-item" href="{% url 'pubedit:article_update' article.id %}"><i
+                                class="fa-solid fa-pen-to-square"></i> Edit article</a>
+                        </li>
                     {% else %}
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-code-pull-request"></i> Pull request</a>
-                    </li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-code-pull-request"></i> Pull request</a>
+                        </li>
                     {% endif %}
 
-                    <li><a class="dropdown-item" href="{% url 'pubedit:article_log' article.id %}"><i class="fa-solid fa-list"></i> Log</a>
+                    <li><a class="dropdown-item" href="{% url 'pubedit:article_log' article.id %}"><i
+                            class="fa-solid fa-list"></i> Log</a>
                     </li>
 
                     <li>
@@ -78,5 +83,7 @@
     </div>
 </div>
 
+
 <script src="{% static 'core/js/comment.js' %}"></script>
+<script src="{% static 'main.js' %}"></script>
 <script src="{% static 'core/js/readmore_collapse.js' %}"></script>
