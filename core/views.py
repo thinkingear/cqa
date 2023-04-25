@@ -79,6 +79,7 @@ def vote(request):
         content_id = data['content_id']
         voter_id = data['user_id']
         voter = User.objects.get(id=voter_id)
+        votes = data['vote']
 
         content_type = ContentType.objects.get(model=content_type_str)
         content_object = content_type.get_object_for_this_type(id=content_id)
@@ -87,7 +88,7 @@ def vote(request):
             voter=voter,
             content_type=content_type,
             content_id=content_id,
-            defaults={'vote': data['vote']}
+            defaults={'vote': votes}
         )
 
         return JsonResponse({'vote': content_object.vote_sum})

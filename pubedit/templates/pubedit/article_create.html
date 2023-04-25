@@ -19,7 +19,7 @@
                 <label for="customInput"></label>
             </div>
             <!-- markdown text Editor -->
-            <textarea class="markdown-editor" name="{{ article_feed_form.feed.name }}"></textarea>
+            {% include 'core/markdown_feed_editor.html' with feed_name=article_feed_form.feed.name %}
             <!-- Article Create Button -->
             <div class="mt-3">
                 <a type="button" class="btn btn-light btn-rounded"
@@ -30,8 +30,5 @@
             </div>
         </form>
     </div>
-
-
-    <script src="{% static 'main.js' %}"></script>
 
 {% endblock %}

@@ -1,8 +1,11 @@
 import { renderMarkdown } from './markdown_display';
 import 'highlight.js/styles/default.css';
+import service  from "./request";
 
 import 'easymde/dist/easymde.min.css';
 import EasyMDE from 'easymde';
+
+window.service = service;
 
 document.addEventListener('DOMContentLoaded', () => {
   const textareas = document.getElementsByClassName('markdown-editor');
@@ -11,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     new EasyMDE({ element: textareas[i] });
   }
 });
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,3 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderedMarkdownElements[i].innerHTML = renderedMarkdown;
   }
 });
+
+
+

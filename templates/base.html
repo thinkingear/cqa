@@ -23,16 +23,8 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
             rel="stylesheet"
     />
-    <!-- Axios library -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- Axios instance -->
-    <script>
-        axios.defaults.withCredentials = true;
-        const service = axios.create({
-            baseURL: 'http://localhost:8080',
-            timeout: 10000,
-        });
-    </script>
+    <!-- webpack bundled js/css files -->
+    <script src="{% static 'main.js' %}"></script>
 </head>
 <body>
 
@@ -52,24 +44,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"
         integrity="sha512-Eezs+g9Lq4TCCq0wae01s9PuNWzHYoCMkE97e2qdkYthpI0pzC3UGB03lgEHn2XM85hDOUF6qgqqszs+iXU4UA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- markdown -->
-<script src="
-https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js
-"></script>
-<!-- tinymce -->
-<script src="{% static 'tinymce/tinymce.min.js' %}">
-</script>
-<script>
-    // tinymce
-    tinymce.init({
-        selector: 'textarea.tinymce-editor'
-    })
-
-</script>
+<!-- bootstrap 5 tags -->
 <script src="{% static 'core/js/core.js' %}"></script>
-  <script type="module">
+<script type="module">
     import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
+
     Tags.init("select");
-  </script>
+</script>
 </body>
+
+
 </html>

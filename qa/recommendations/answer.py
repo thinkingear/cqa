@@ -6,12 +6,12 @@ from qa.models import Answer, AnswerFollower, Question, QuestionFollower
 from core.models import Vote, ContentViewd
 from datetime import datetime
 from account.models import User, AccountFollower
-from bs4 import BeautifulSoup
 from qa.recommendations.question import get_question_all_id_similarity_df, get_top_n_question_similarity_series
+from core.recommendations.content import markdown_to_text
 
 
 def get_answer_text(answer):
-    return answer.question.title + ' ' + BeautifulSoup(answer.feed, 'html.parser').get_text()
+    return answer.question.title + ' ' + markdown_to_text(answer.feed)
 
 
 # 获取系统中所有问题文本之间的相似度 DataFrame

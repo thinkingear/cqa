@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.urls import reverse
@@ -101,7 +102,6 @@ def new_course(request):
                         section_counter_2_video_counter_2_video[section_counter] = {}
 
                     section = section_counter_2_section[section_counter]
-                    video = Video()
 
                     video = Video.objects.create(
                         poster=request.user,
@@ -138,13 +138,12 @@ def new_course(request):
         return render(request, 'course/course_create.html', context)
 
 
-
 @csrf_exempt
-# @login_required
 def update_course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'GET':
-        course_form = CourseForm(course)
+        course_dict = model_to_dict(course)  # 将 course 对象转换为字典
+        course_form = CourseForm(course_dict)  # 传递字典而不是 course 对象
         context = {'course': course, 'form': course_form}
         return render(request, 'course/course_update.html', context)
 

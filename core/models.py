@@ -67,6 +67,14 @@ class Content(models.Model):
         super(Content, self).save(*args, **kwargs)
 
 
+class ContentFollower(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
 class Vote(models.Model):
     voter = models.ForeignKey(User, on_delete=models.CASCADE)
     vote = models.IntegerField()
@@ -88,7 +96,7 @@ class Comment(Content):
     content_object = GenericForeignKey('content_type', 'content_id')
 
     class Meta:
-        ordering = ['created']
+        ordering = ['-created']
 
     def __str__(self):
         return self.feed

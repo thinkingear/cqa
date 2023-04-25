@@ -1,7 +1,6 @@
 from django.db import models
 from account.models import User
-from core.models import Content, Tag
-from tinymce.models import HTMLField
+from core.models import Content, Tag, ContentFollower
 # Create your models here.
 
 
@@ -24,7 +23,7 @@ class Question(Content):
 
 class Answer(Content):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    feed = HTMLField(null=True, blank=True)
+    feed = models.TextField(null=True, blank=True)
     followers = models.ManyToManyField(User, through='AnswerFollower', related_name='followed_answers')
     views = models.PositiveIntegerField(default=0)
 
@@ -35,10 +34,8 @@ class Answer(Content):
         return self.feed[:50]
 
 
-class AnswerFollower(models.Model):
+class AnswerFollower(ContentFollower):
     answer = models.ForeignKey('qa.Answer', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
@@ -46,10 +43,8 @@ class AnswerFollower(models.Model):
         ]
 
 
-class QuestionFollower(models.Model):
+class QuestionFollower(ContentFollower):
     question = models.ForeignKey('qa.Question', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

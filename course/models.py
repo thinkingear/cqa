@@ -1,7 +1,6 @@
 from django.db import models
 from account.models import User
-from core.models import Content
-from tinymce.models import HTMLField
+from core.models import Content, ContentFollower
 from moviepy.editor import VideoFileClip
 # Create your models here.
 
@@ -10,7 +9,7 @@ class Course(Content):
     title = models.CharField(max_length=128, default='')
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True)
     description = models.TextField(null=True, blank=True)
-    overview = HTMLField(null=True, blank=True)
+    overview = models.TextField(null=True, blank=True)
     visibility = models.CharField(
         max_length=10,
         choices=[('private', 'Private'), ('public', 'Public')],
@@ -107,10 +106,8 @@ class Video(Content):
         super(Video, self).delete(*args, **kwargs)
 
 
-class CourseFollower(models.Model):
+class CourseFollower(ContentFollower):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
@@ -118,9 +115,8 @@ class CourseFollower(models.Model):
         ]
 
 
-class VideoFollower(models.Model):
+class VideoFollower(ContentFollower):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [

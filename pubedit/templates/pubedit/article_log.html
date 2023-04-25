@@ -4,24 +4,15 @@
     {% load static %}
     {% load zip_filters %}
     <link rel="stylesheet" href="{% static 'core/css/readmore_collapse.css' %}">
-    <style>
-        .custom-modal-width {
-            max-width: 1000px;
-        }
+        <link rel="stylesheet" href="{% static 'core/css/modal-custom-width.css' %}">
 
-        @media (max-width: 768px) {
-            .custom-modal-width {
-                max-width: 90%;
-            }
-        }
 
-    </style>
     <section>
         <div class="container py-5">
             <div class="row d-flex justify-content-center align-items-center">
                 <div class="col-9 col-md-9 col-lg-9 col-xl-9">
                     <div class="card">
-                        <div class="card-header px-3">Article Log</div>
+                        <div class="card-header px-3 fs-3 fw-bold">Article Log</div>
                         <ul class="list-group list-group-light list-group-large">
                             {% for article_feed, article_diff_html in combined_data %}
                                 <li class="list-group-item px-3">
@@ -29,9 +20,13 @@
                                     <div class="row">
                                         <div class="col d-flex justify-content-start align-items-center">
                                             <p class="fs-4">
+                                                {% if article_feed.poster == article.poster %}
                                                 <a href="{% url 'core:search' %}?q={{ article.title }}&type=article&sort=latest">{{ article.title }}</a>
                                                 edited by
-                                                <a href="{% url 'account:profile' article.poster.id %}">{{ article.poster }}</a>
+                                                <a href="{% url 'account:profile' article.poster.id %}">@{{ article.poster }}</a>
+                                                {% else %}
+                                                Edit suggested for <a href="{% url 'account:profile' article.poster.id %}">@{{ article.poster }}</a>'s article by <a href="{% url 'account:profile' article_feed.poster.id %}">@{{ article_feed.poster }}</a>
+                                                {% endif %}
                                             </p>
                                         </div>
                                         <div class="col d-flex justify-content-end align-items-center me-3">
@@ -92,8 +87,7 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <!-- markdown text Editor -->
-                                                            <textarea
-                                                                    class="markdown-editor">{{ article.feed }}</textarea>
+                                                            {% include 'core/markdown_feed_editor.html' with feed_value=article.feed %}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -109,7 +103,6 @@
         </div>
     </section>
 
-    <script src="{% static 'main.js' %}"></script>
     <script src="{% static 'core/js/readmore_collapse.js' %}"></script>
 
 {% endblock %}

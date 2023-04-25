@@ -1,0 +1,53 @@
+{% load static %}
+<!-- Styles for removing card shadow -->
+<style>
+    .no-shadow {
+        box-shadow: none !important;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header px-3 fs-3 fw-bold">Question Invitations</div>
+    {% with invitations=request.user.question_invitations.all %}
+        {% if invitations %}
+            <div class="container mt-4">
+                {% for invitation in invitations %}
+                    {% with invitation.created|date:"Y-m-d" as current_date %}
+                        <h4 class="mt-4 invitation-date">{{ current_date }}</h4>
+                        <div class="card no-shadow mb-3">
+                            <div class="card-body">
+                                <!-- Invitation content goes here -->
+                                <div class="row align-items-center">
+                                    <!-- icon -->
+                                    <div class="col-auto ps-0">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                    </div>
+                                    <!-- invitation content -->
+                                    <div class="col ps-0">
+                                        <!-- 邀请你回答 · 时间 -->
+                                        <div class="row">
+                                            <div class="col">
+                                            <span class="fw-light"><a
+                                                    href="{% url 'account:profile' invitation.poster.id %}">@{{ invitation.poster }}</a> invite you to answer the question · {{ invitation.created|date:"H:i" }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- 问题标题 -->
+                                        <div class="row">
+                                            <div class="col fw-bold">
+                                                <a href="{% url "qa:question_detail" invitation.question.id %}">{{ invitation.question.title }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No invitations found.</p>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<script src="{% static "notification/js/question_invitations_list.js" %}"></script>

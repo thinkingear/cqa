@@ -34,7 +34,10 @@ urlpatterns = [
     path('qa/', include('qa.urls')),
 
     # course
-    path('course/', include('course.urls'))
+    path('course/', include('course.urls')),
+
+    # notification
+    path('notification/', include('notification.urls'))
 ]
 
 # handel static files

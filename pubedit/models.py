@@ -1,7 +1,7 @@
 from django.db import models
 from core.models import Content
 from account.models import User
-from core.models import Content, Tag
+from core.models import Content, Tag, ContentFollower
 # Create your models here.
 
 
@@ -20,7 +20,7 @@ class Article(Content):
 
     @property
     def latest_article_feed(self):
-        return self.feeds.order_by('-created').first()
+        return self.feeds.filter(is_pending=False).order_by('-created').first()
 
     @property
     def feed(self):
@@ -38,6 +38,7 @@ class ArticleFeed(Content):
     article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE, related_name='feeds')
     parent = models.ForeignKey('pubedit.ArticleFeed', on_delete=models.SET_NULL, null=True, related_name='child')
     is_initial = models.BooleanField(default=False)
+    is_pending = models.BooleanField(default=False)
     feed = models.TextField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
 
@@ -45,10 +46,8 @@ class ArticleFeed(Content):
         ordering = ['-created', '-updated']
 
 
-class ArticleFollower(models.Model):
+class ArticleFollower(ContentFollower):
     article = models.ForeignKey('pubedit.Article', on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

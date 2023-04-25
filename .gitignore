@@ -10,3 +10,4 @@ media/videos/*mp4
 .env
 profanity_list_file.txt
 frontend/node_modules
+frontend/dist

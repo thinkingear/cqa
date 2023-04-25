@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="row">
+        <!-- filter -->
+        <div class="col-md-3 mt-3">
+            <!-- form filter -->
+            <div class="row">
+                <div class="col">
+                    <form id="notification-filter-form">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-header px-3 text-center bg-info text-white"><span><strong>Filters</strong></span></div>
+                            <div class="btn-group-vertical my-1" role="group" aria-label="Vertical button group">
+                                <input type="radio" class="btn-check" name="type"
+                                       id="notification-invite-quesiton"
+                                       autocomplete="off" value="invited_questions"/>
+                                <label class="btn btn-info" for="notification-invite-quesiton">Invited questions</label>
+
+                                <input type="radio" class="btn-check" name="type"
+                                       id="notification-pulled-requests"
+                                       autocomplete="off" value="pulled_requests"/>
+                                <label class="btn btn-info" for="notification-pulled-requests">Pulled requests</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- content -->
+        <div class="col-md-8 my-3">
+        {% if notification_type == "invited_questions" %}
+            {% include "notification/question_invitations_list.html" %}
+        {% elif notification_type == "pulled_requests" %}
+            {% include "notification/pulled_requests_list.html" with combined_data=combined_data %}
+        {% endif %}
+        </div>
+    </div>
+
+    <script src="{% static 'notification/js/notification_page.js' %}"></script>
+{% endblock %}

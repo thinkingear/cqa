@@ -1,6 +1,4 @@
 
-
-
 function toggleCommentBox(element) {
     const commentBox = findAncestorWithClass(element, '.comment-box')
 

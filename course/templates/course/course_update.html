@@ -39,11 +39,7 @@
                 <!-- Overview -->
                 <div class="mb-4">
                     <p class="fw-light">Overview</p>
-                    <textarea class="tinymce-editor" name="overview" id="{{ form.overview.auto_id }}"
-                              cols="{{ form.overview.widget.attrs.cols }}"
-                              rows="{{ form.overview.widget.attrs.rows }}">
-                            {{ course.overview|safe }}
-                        </textarea>
+                    {% include 'core/markdown_feed_editor.html' with feed_name=form.overview.name feed_value=form.overview.value %}
                 </div>
                 <!-- visibility -->
                 <div class="mb-4">

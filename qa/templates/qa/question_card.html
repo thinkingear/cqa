@@ -1,5 +1,9 @@
 {% load static %}
-
+<style>
+    .custom-modal-width {
+        max-width: 650px;
+    }
+</style>
 <div class="card">
     <!-- tags -->
     {% include 'core/tags.html' with content=question %}
@@ -7,22 +11,24 @@
     <!-- question title -->
     <div class="row mt-2">
         <a href="{% url 'qa:question_detail' question.id %}" onclick="service.get('/history/', {
-            params: {
+                params: {
                 content_type: '{{ question.content_type_str }}',
                 content_id: {{ question.id }},
                 user_id: {{ request.user.id }},
                 cmd: 'create'
-            }
-        }).then((response) => {
+                }
+                }).then((response) => {
 
-        }).catch((error) => {
-            console.log(error);
-        })"><h3>{{ question.title }}</h3></a>
+                }).catch((error) => {
+                console.log(error);
+                })"><h3>{{ question.title }}</h3></a>
     </div>
     <!-- qustion details -->
     <div class="row mt-1">
         <div class="col d-flex justify-content-start">
-            <div class="fw-light"><strong>{{ question.answers.all.count }} answers</strong> · updated {{ question.updated | timesince }} ago</div>
+            <div class="fw-light"><strong>{{ question.answers.all.count }} answers</strong> ·
+                updated {{ question.updated | timesince }} ago
+            </div>
             <div class="mx-2" style="border-left: 1px solid #666;"></div>
             <div><i class="fa-solid fa-eye"></i> {{ question.views }}</div>
         </div>
@@ -31,6 +37,12 @@
     <!-- question toggle button -->
     <div class="row my-2 qustion-toggle-bar">
         <div class="col-md-9">
+            <button type="button" class="btn btn-outline-secondary btn-rounded invite-question-button"
+                    data-mdb-ripple-color="dark" data-mdb-toggle="modal"
+                    data-mdb-target="#question-{{ question.id }}-modal">
+                <i class="fa-solid fa-handshake"></i>
+                Ask other
+            </button>
             <a type="button" class="btn btn-outline-secondary btn-rounded" data-mdb-ripple-color="dark"
                href="{% url 'qa:answer_create' question.id %}">
                 <i class="fa-solid fa-pen-to-square"></i>
@@ -43,10 +55,40 @@
         <div class="col-md-1">
             <i class="fa-solid fa-comment-dots" onclick="toggleCommentBox(this)" style="cursor: pointer;"></i>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade invite-question-modal" id="question-{{ question.id }}-modal" tabindex="-1"
+             aria-labelledby="question-{{ question.id }}-modal-label" aria-hidden="true" data-question-id="{{ question.id }}" data-invitor-id="{{ request.user.id }}">
+            <div class="modal-dialog modal-dialog-centered custom-modal-width">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="col d-flex align-items-center">
+                            <div class="modal-title fs-4 fw-bold" id="question-{{ question.id }}-modal-label">Invite
+                                others
+                            </div>
+                        </div>
+                        <div class="col d-flex justify-content-end align-items-center">
+                            <div class="input-group rounded">
+                                <input type="search" class="form-control rounded recipient-search-input" placeholder="Search user"
+                                       aria-label="Search" aria-describedby="search-addon"/>
+                                <span class="input-group-text border-0" id="search-addon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group list-group-light list-group-large">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row my-1">
         {% include 'core/comment.html' with content=question %}
     </div>
 </div>
 
+<script src="{% static 'notification/js/question_invite.js' %}"></script>
 <script src="{% static 'core/js/comment.js' %}"></script>

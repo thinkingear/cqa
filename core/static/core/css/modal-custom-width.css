@@ -1,0 +1,10 @@
+.custom-modal-width {
+    max-width: 1000px;
+}
+
+@media (max-width: 768px) {
+    .custom-modal-width {
+        max-width: 90%;
+    }
+}
+

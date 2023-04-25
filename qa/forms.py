@@ -13,7 +13,3 @@ class AnswerForm(ModelForm):
     class Meta:
         model = Answer
         fields = ['feed']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['feed'].widget.attrs.update({'class': 'tinymce-editor'})

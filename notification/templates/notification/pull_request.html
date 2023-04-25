@@ -1,0 +1,52 @@
+{% extends 'core/content_backgroud.html' %}
+
+{% block content_backgroud %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'simplemde/dist/simplemde.min.css' %}">
+
+    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <form class="card-body p-5 text-center"
+              method="post" action="{% url 'notification:pull_request_article' article.id %}">
+            {% csrf_token %}
+            <!-- Title -->
+            <h3 class="mb-5">Pull Requset</h3>
+            <!-- Article Title -->
+            <div class="my-5">
+                <div class="form-outline">
+                    <input
+                            class="form-control"
+                            id="formControlReadonly"
+                            type="text"
+                            value="{{ article_form.title.value }}"
+                            aria-label="readonly input example"
+                            readonly
+                    />
+                    <label class="form-label" for="formControlReadonly">Article title</label>
+                </div>
+            </div>
+
+            <!-- markdown text Editor -->
+            {% include 'core/markdown_feed_editor.html' with feed_name=article_feed_form.feed.name feed_value=article_feed_form.feed.value %}
+            <!-- Update Comment -->
+            <div class="my-3">
+                <div class="form-outline">
+                    <textarea id="comment" class="form-control" name="{{ blank_article_feed_form.comment.name }}"
+                              rows="4"></textarea>
+                    <label class="form-label" for="comment">Comment</label>
+                </div>
+                <div class="form-text">
+                    writing a comment to what you just edited for the article is a good habit.
+                </div>
+            </div>
+            <!-- Article Create Button -->
+            <div class="mt-3">
+                <a type="button" class="btn btn-light btn-rounded"
+                   href="{% url 'core:home' %}">Cancel</a>
+                <button type="submit" id="article_create_submit" class="btn btn-primary btn-rounded"
+                >Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

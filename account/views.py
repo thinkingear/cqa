@@ -3,13 +3,15 @@ from django.conf import settings
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from account.forms import RegistrationForm, LoginForm
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, reverse
 from account.models import User, UserProfile
 from django.contrib.auth import login, logout
 from .backends import EmailBackend
 from .models import AccountFollower
 from django.http import JsonResponse
-
+from django.templatetags.static import static
+from notification.models import QuestionInvitation
+from qa.models import Question
 
 def register_page(request):
     if request.method == 'POST':
@@ -193,3 +195,6 @@ def profile_description(request, user_id):
         return JsonResponse({'status': 200})
 
     return JsonResponse({'status': 403})
+
+
+

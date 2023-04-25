@@ -35,7 +35,7 @@
                 <!-- Overview -->
                 <div class="mb-4">
                     <p class="fw-light">Overview</p>
-                    {{ form.overview | safe }}
+                    {% include 'core/markdown_feed_editor.html' with feed_name=form.overview.name feed_value=form.overview.value %}
                 </div>
                 <!-- visibility -->
                 <div class="mb-4">

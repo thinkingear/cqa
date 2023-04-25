@@ -5,9 +5,6 @@ from .forms import ArticleForm, ArticleFeedForm
 from .models import Article, ArticleTag
 from core.views import content_follow, tags_handler
 from django.views.decorators.csrf import csrf_exempt
-from bs4 import BeautifulSoup
-import json
-from django.http import JsonResponse
 
 # Create your views here.
 
@@ -66,7 +63,7 @@ def compare_feeds(feed1, feed2):
 
 def article_log(request, pk):
     article = Article.objects.get(id=pk)
-    article_feeds = [article_feed for article_feed in article.feeds.all()]
+    article_feeds = [article_feed for article_feed in article.feeds.all().filter(is_pending=False)]
 
     article_feeds_with_last_twice = article_feeds + [article_feeds[-1]]
 

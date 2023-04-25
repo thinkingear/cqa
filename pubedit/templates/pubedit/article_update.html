@@ -19,10 +19,7 @@
                 <label for="customInput"></label>
             </div>
             <!-- markdown text Editor -->
-            <textarea class="markdown-editor" name="{{ article_feed_form.feed.name }}">
-             {{ article_feed_form.feed.value }}
-            </textarea>
-
+            {% include 'core/markdown_feed_editor.html' with feed_name=article_feed_form.feed.name feed_value=article_feed_form.feed.value  %}
             <!-- Update Comment -->
             <div class="my-3">
                 <div class="form-outline">
@@ -45,5 +42,4 @@
         </form>
     </div>
 
-    <script src="{% static 'main.js' %}"></script>
 {% endblock %}

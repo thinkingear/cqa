@@ -89,7 +89,7 @@
                     <div class="col">
                         <!-- course overview -->
                         <div id="course-overview-content" style="display: block">
-                            {{ course.overview | safe }}
+                            {% include 'core/markdown_feed_display.html' with feed=course.overview %}
                         </div>
                         <!-- video comments -->
                         {% if video %}
