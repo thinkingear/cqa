@@ -3,12 +3,11 @@
 <div class="row d-flex justify-content-center align-items-center">
     <div class="col-12 col-md-12 col-lg-12 col-xl-12">
         <div class="card shadow-2-strong" style="border-radius: 1rem;">
-            <!-- course info -->
+            <!-- video info -->
             <div class="row my-3 mx-2">
                 <!-- thumbnail -->
                 <div class="col-md-3 d-flex justify-content-center align-items-center">
-                    <a href="{% url 'course:course_detial' course.id %}"><img src="{{ course.thumbnail.url }}" alt="Course Thumbnail"
-
+                    <a href="{% url 'course:course_detial' video.section.course.id %}?video={{ video.id }}"><img src="{% url 'course:video_thumbnail' video.id %}" alt="Video Thumbnail"
                             class="thumbnail-image rounded img-fluid"></a>
                 </div>
                 <!-- title, created, views, description -->
@@ -16,8 +15,8 @@
                     <!-- title -->
                     <div class="row">
                         <div class="col">
-                            <a href="{% url 'course:course_detial' course.id %}">
-                                <h1>{{ course.title }}</h1>
+                            <a href="{% url 'course:course_detial' video.section.course.id %}?video={{ video.id }}">
+                                <h3>{{ video.title }}</h3>
                             </a>
                         </div>
                     </div>
@@ -25,18 +24,18 @@
                     <div class="row">
                         <!-- created -->
                         <div class="col-md-7">
-                            <span><i class="fa-solid fa-calendar"></i> {{ course.created }}</span>
+                            <span><i class="fa-solid fa-calendar"></i> {{ video.created }}</span>
                         </div>
                         <!-- views -->
                         <div class="col-md-5">
-                            <span><i class="fa-brands fa-youtube"></i> {{ course.views }}</span>
+                            <span><i class="fa-brands fa-youtube"></i> {{ video.views }}</span>
                         </div>
                     </div>
                     <!-- description -->
                     <div class="row">
                         <div class="col">
                             <span>
-                                {{ course.description }}
+                                {{ video.description }}
                             </span>
                         </div>
                     </div>
@@ -47,11 +46,11 @@
                 <div class="col d-flex justify-content-start align-items-center">
                     <!-- follow -->
                     <div class="mx-1">
-                        {% include 'core/content_follow_button.html' with content=course %}
+                        {% include 'core/content_follow_button.html' with content=video %}
                     </div>
                     <!-- vote -->
                     <div class="mx-1">
-                        {% include 'core/vote.html' with content=course %}
+                        {% include 'core/vote.html' with content=video %}
                     </div>
                 </div>
                 <div class="col d-flex justify-content-end align-items-center me-3">
@@ -62,17 +61,17 @@
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            {% if course.poster == request.user %}
-                                <li><a class="dropdown-item" href="{% url 'course:update_course' course.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                            {% if video.poster == request.user %}
+                                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider"/>
                                 </li>
-                                <li><span class="dropdown-item" onclick="toggleDeleteCourseButton(this, {{ course.id }})"><i class="fa-solid fa-trash"></i> Delete</span>
+                                <li><span class="dropdown-item"><i class="fa-solid fa-trash"></i> Delete</span>
                                 </li>
                             {% else %}
                                 <li><a class="dropdown-item"
-                                       href="{% url 'account:profile' user_id=course.poster.id %}"><i
+                                       href="{% url 'account:profile' user_id=video.poster.id %}"><i
                                         class="fa-solid fa-user-tie"></i> About author</a>
                                 </li>
                             {% endif %}
@@ -92,4 +91,3 @@
 </div>
 
 <script src="{% static 'core/js/comment.js' %}"></script>
-<script src="{% static 'course/js/course_card.js' %}"></script>

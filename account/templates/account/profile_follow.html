@@ -1,47 +1,94 @@
-<!-- #Following Following | options -->
-<div class="d-flex align-items-center mb-2">
-    <!-- #Following Following  -->
-    <div class="col-md-4 fs-5">
+{% load static %}
 
-        {% if following_type == 'question' %}
-            {{ user.followed_questions.all.count }}
-        {% elif following_type == 'answer' %}
-            {{ user.followed_answers.all.count }}
-        {% elif following_type == 'article' %}
-            {{ user.followed_articles.all.count }}
-        {% endif %}
-        <span> Following</span>
-    </div>
-    <!-- margin -->
-    <div class="col-md-6"></div>
-    <!-- options button -->
-    <div class="col-md-2">
-        <!-- Default dropleft button -->
-        <div class="btn-group dropstart">
-            <button type="button" class="btn btn-light btn-lg dropdown-toggle text-capitalize" data-mdb-toggle="dropdown"
+<!-- Styles for removing card shadow -->
+<link rel="stylesheet" href="{% static 'notification/css/no_shadow.css' %}">
+<style>
+    .btn-no-uppercase {
+        text-transform: none !important;
+    }
+</style>
+
+
+<div class="row px-3 fs-3 fw-bold align-items-center mb-3">
+    <div class="col d-flex justify-content-start ">Following</div>
+    <div class="col d-flex justify-content-end me-3">
+        <div class="dropdown">
+            <button class="btn btn-primary btn-lg dropdown-toggle btn-no-uppercase"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-mdb-toggle="dropdown"
                     aria-expanded="false">
-                {{ following_type }}s
+                Content Type
             </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=answer">Answers</a></li>
-                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=question">Questions</a></li>
-                <li><a class="dropdown-item" href="{% url 'account:profile_content_type' user_id=user.id content_type='following' %}?type=article">Articles</a></li>
-            </ul>
-        </div>
 
+            <form id="profile-followed-content-form">
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li>
+                        <input type="radio" class="btn-check" name="followed_type"
+                               id="profile-followed-question"
+                               autocomplete="off" value="question"/>
+                        <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                               for="profile-followed-question">Question</label>
+                    </li>
+                    <li>
+                        <input type="radio" class="btn-check" name="followed_type"
+                               id="profile-followed-answer"
+                               autocomplete="off" value="answer"/>
+                        <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                               for="profile-followed-answer">Answer</label>
+                    </li>
+                    <li>
+                        <input type="radio" class="btn-check" name="followed_type"
+                               id="profile-followed-article"
+                               autocomplete="off" value="article"/>
+                        <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                               for="profile-followed-article">Article</label>
+                    </li>
+                    <li>
+                        <input type="radio" class="btn-check" name="followed_type"
+                               id="profile-followed-course"
+                               autocomplete="off" value="course"/>
+                        <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                               for="profile-followed-course">Course</label>
+                    </li>
+                    <li>
+                        <input type="radio" class="btn-check" name="followed_type"
+                               id="profile-followed-video"
+                               autocomplete="off" value="video"/>
+                        <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                               for="profile-followed-video">Video</label>
+                    </li>
+                </ul>
+            </form>
+        </div>
     </div>
 </div>
 
-{% if following_type == 'question' %}
-    {% for question in user.followed_questions.all %}
-        {% include 'qa/question_card.html' with question=question %}
+{% if followed_type == "question" %}
+    {% for question in followed_contents %}
+        {% include "qa/question_card.html" with question=question %}
     {% endfor %}
-{% elif following_type == 'answer' %}
-    {% for answer in user.followed_answers.all %}
-        {% include 'qa/answer_card.html' with answer=answer show_question=True %}
+{% elif followed_type == "answer" %}
+    {% for answer in followed_contents %}
+        {% include "qa/answer_card.html" with answer=answer show_question=True %}
     {% endfor %}
-{% elif following_type == 'article' %}
-    {% for article in user.followed_articles.all %}
-        {% include 'pubedit/article_card.html' with article=article %}
+{% elif followed_type == "article" %}
+    {% for article in followed_contents %}
+        {% include "pubedit/article_card.html" with article=article %}
+    {% endfor %}
+{% elif followed_type == "course" %}
+    {% for course in followed_contents %}
+        {% include "course/course_card.html" with course=course %}
+    {% endfor %}
+{% elif followed_type == "video" %}
+    {% for video in followed_contents %}
+        {% include "course/video_card.html" with video=video %}
     {% endfor %}
 {% endif %}
+
+
+
+<script src="{% static "notification/js/initial_filter.js" %}"></script>
+<script>
+    initial_filter("profile-followed-content-form", "followed_type");
+</script>

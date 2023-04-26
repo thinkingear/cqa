@@ -19,8 +19,8 @@
 
 ### 尚未实现的功能
 
-1. Account Profile 中查看所有 followed content
-2. 通过结果缓存和定时任务来优化推荐系统性能
-3. Qustion, Answer, Article 的删改
-4. Course 的查询的可见性
-5. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、用户私信、历史记录
+1. 通过结果缓存和定时任务来优化推荐系统性能
+2. Qustion, Answer, Article, Video 的删改
+3. Course 的查询的可见性
+4. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、用户私信、历史记录
+

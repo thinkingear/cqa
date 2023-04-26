@@ -9,7 +9,10 @@ from .forms import CourseForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import re
-from django.contrib.auth.decorators import login_required
+from django.http import FileResponse
+from moviepy.editor import VideoFileClip
+from PIL import Image
+import io
 
 # Create your views here.
 
@@ -306,3 +309,16 @@ def update_course(request, course_id):
             return JsonResponse({'status': 'error'})
 
 
+def video_thumbnail(request, video_id):
+    video = Video.objects.get(id=video_id)
+    clip = VideoFileClip(video.video_file.path)
+    frame = clip.get_frame(0)  # Get the first frame of the video
+
+    img = Image.fromarray(frame)
+    buffer = io.BytesIO()
+    img.save(buffer, format='JPEG')
+    buffer.seek(0)
+
+    response = FileResponse(buffer, content_type='image/jpeg')
+    response['Content-Disposition'] = f'inline; filename="{video.title}_thumbnail.jpg"'
+    return response

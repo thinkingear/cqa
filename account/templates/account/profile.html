@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
-
 {% block content %}
     {% load static %}
+    <link rel="stylesheet" href="{% static 'notification/css/no_shadow.css' %}">
     <link rel="stylesheet" href="{% static 'account/css/profile.css' %}">
     <div class="row mt-4">
         <!-- margin -->
         <div class="col-md-1"></div>
         <!-- account profile -->
-        <div class="col-md-7" id="profile-info" data-user-id="{{ user.id }}" data-request-user-id="{{ request.user.id }}">
+        <div class="col-md-7" id="profile-info" data-user-id="{{ user.id }}"
+             data-request-user-id="{{ request.user.id }}">
             <!-- avatar, username, followers, folling, profile bio -->
             <div class="row">
                 <!-- avatar -->
@@ -185,33 +186,61 @@
             </div>
             <!-- content type toggle button group -->
             <div class="row mt-3">
-                <form id="profile-filter-form">
-                    <div class="btn-group" role="group" aria-label="button group">
-                        <input type="radio" class="btn-check" name="profile-content-type"
-                               id="profile-content-type-answers"
-                               autocomplete="off" value="answer"/>
-                        <label class="btn btn-light btn-lg me-2"
-                               for="profile-content-type-answers">{{ user.answer_posted.count }} Answers</label>
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light no-shadow">
+                    <!-- Container wrapper -->
+                    <div class="container">
+                        <!-- Collapsible wrapper -->
+                        <div class="collapse navbar-collapse justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <form id="profile-filter-form">
+                                    <input type="radio" class="btn-check" name="profile-content-type"
+                                           data-mdb-ripple-color="dark"
+                                           id="profile-content-type-answers"
+                                           autocomplete="off" value="answer"/>
+                                    <label class="btn btn-light btn-lg me-2"
+                                           for="profile-content-type-answers">{{ user.answer_posted.count }}
+                                        Answers</label>
 
-                        <input type="radio" class="btn-check" name="profile-content-type"
-                               id="profile-content-type-questions"
-                               autocomplete="off" value="question"/>
-                        <label class="btn btn-light btn-lg mx-2"
-                               for="profile-content-type-questions">{{ user.question_posted.count }} Questions</label>
+                                    <input type="radio" class="btn-check" name="profile-content-type"
+                                           data-mdb-ripple-color="dark"
+                                           id="profile-content-type-questions"
+                                           autocomplete="off" value="question"/>
+                                    <label class="btn btn-light btn-lg mx-2"
+                                           for="profile-content-type-questions">{{ user.question_posted.count }}
+                                        Questions</label>
 
-                        <input type="radio" class="btn-check" name="profile-content-type"
-                               id="profile-content-type-posts"
-                               autocomplete="off" value="article"/>
-                        <label class="btn btn-light btn-lg mx-2"
-                               for="profile-content-type-posts">{{ user.article_posted.count }} Posts</label>
+                                    <input type="radio" class="btn-check" name="profile-content-type"
+                                           data-mdb-ripple-color="dark"
+                                           id="profile-content-type-posts"
+                                           autocomplete="off" value="article"/>
+                                    <label class="btn btn-light btn-lg mx-2"
+                                           for="profile-content-type-posts">{{ user.article_posted.count }}
+                                        Posts</label>
 
-                        <input type="radio" class="btn-check" name="profile-content-type"
-                               id="profile-content-type-cousres"
-                               autocomplete="off" value="course"/>
-                        <label class="btn btn-light btn-lg mx-2"
-                               for="profile-content-type-cousres">{{ user.course_posted.count }} Courses</label>
+                                    <input type="radio" class="btn-check" name="profile-content-type"
+                                           data-mdb-ripple-color="dark"
+                                           id="profile-content-type-cousres"
+                                           autocomplete="off" value="course"/>
+                                    <label class="btn btn-light btn-lg mx-2"
+                                           for="profile-content-type-cousres">{{ user.course_posted.count }}
+                                        Courses</label>
+
+                                    <input type="radio" class="btn-check" name="profile-content-type"
+                                           data-mdb-ripple-color="dark"
+                                           id="profile-content-type-follows"
+                                           autocomplete="off" value="follow"/>
+                                    <label class="btn btn-light btn-lg mx-2"
+                                           for="profile-content-type-follows">
+                                        Follows</label>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Collapsible wrapper -->
                     </div>
-                </form>
+                    <!-- Container wrapper -->
+                </nav>
+                <!-- Navbar -->
             </div>
             <hr>
             <!-- content for a specific content type -->
@@ -232,8 +261,8 @@
                     {% for course in user.course_posted.all %}
                         {% include 'course/course_card.html' with course=course %}
                     {% endfor %}
-                {% elif content_type == 'following' %}
-                    {% include 'account/profile_follow.html' with user=user following_type=following_type %}
+                {% elif content_type == 'follow' %}
+                    {% include 'account/profile_follow.html' with followed_type=followed_type followed_contents=followed_contents %}
                 {% endif %}
             </div>
         </div>

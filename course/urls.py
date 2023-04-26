@@ -11,4 +11,5 @@ urlpatterns = [
     path('course/follow/', views.course_follow, name='course_follow'),
     path('video/follow/', views.video_follow, name='video_follow'),
     path('update/<str:course_id>', views.update_course, name='update_course'),
+    path('video/<int:video_id>/thumbnail/', views.video_thumbnail, name='video_thumbnail'),
 ]

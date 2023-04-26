@@ -31,7 +31,8 @@ class Content(models.Model):
     @property
     def vote_sum(self):
         total_votes = Vote.objects.filter(content_type=self.content_type_object, content_id=self.id).aggregate(sum_of_votes=Sum('vote'))
-        return total_votes['sum_of_votes']
+        votes = total_votes['sum_of_votes']
+        return 0 if votes is None else votes
 
     @property
     def get_comments(self):

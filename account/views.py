@@ -153,14 +153,27 @@ def profile_page(request, user_id, content_type=None):
     if request.method == 'GET':
         if content_type is None:
             return redirect('account:profile_content_type', user_id=user_id, content_type='answer')
-
         user = User.objects.get(id=user_id)
         context = {'user': user, 'content_type': content_type}
 
-        if content_type == 'following':
-            following_type = request.GET.get('type', '')
-            following_type = following_type if following_type != '' else 'answer'
-            context['following_type'] = following_type
+        if content_type == 'follow':
+            followed_type = request.GET.get('followed_type', '')
+            context['followed_type'] = followed_type
+
+            followed_contents = []
+
+            if followed_type == 'question':
+                followed_contents += [question for question in user.followed_questions.all()]
+            elif followed_type == "answer":
+                followed_contents += [answer for answer in user.followed_answers.all()]
+            elif followed_type == "article":
+                followed_contents += [article for article in user.followed_articles.all()]
+            elif followed_type == "course":
+                followed_contents += [course for course in user.followed_courses.all()]
+            elif followed_type == "video":
+                followed_contents += [video for video in user.followed_videos.all()]
+
+            context["followed_contents"] = followed_contents
 
         return render(request, 'account/profile.html', context)
 

@@ -81,6 +81,9 @@ def min_max_normalization(min_value, max_value, total_value):
 
 
 def get_answer_2_answer_score(answers):
+    if answers.count() == 0:
+        return {}
+
     max_votes = max(answer.vote_sum for answer in answers)
     min_votes = min(answer.vote_sum for answer in answers)
 
@@ -201,15 +204,14 @@ def get_user_all_related_answers_df():
             for related_question_id, similarity in related_questions.items():
                 related_question = Question.objects.get(id=related_question_id)
                 answers = related_question.answers.all()
-                if len(answers) != 0:
-                    for answer, answer_score in get_answer_2_answer_score(answers).items():
-                        user_all_related_answers_data.append({
-                            'user_id': user.id,
-                            'answer_id': answer.id,
-                            'answer_score': answer_score,
-                            'action': action,
-                            'action_timestamp': action_timestamp,
-                        })
+                for answer, answer_score in get_answer_2_answer_score(answers).items():
+                    user_all_related_answers_data.append({
+                        'user_id': user.id,
+                        'answer_id': answer.id,
+                        'answer_score': answer_score,
+                        'action': action,
+                        'action_timestamp': action_timestamp,
+                    })
 
         # positively_voted_questions_related_questions_answer
         # negatively_voted_questions_related_questions_answer
