@@ -1,0 +1,133 @@
+{% load static %}
+<!-- Styles for removing card shadow -->
+<link rel="stylesheet" href="{% static 'notification/css/no_shadow.css' %}">
+<style>
+    .btn-no-uppercase {
+        text-transform: none !important;
+    }
+</style>
+
+
+<div class="card">
+    <div class="row card-header px-3 fs-3 fw-bold align-items-center">
+        <div class="col d-flex justify-content-start ">Followed Contents</div>
+        <div class="col d-flex justify-content-end me-3">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle btn-no-uppercase"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-mdb-toggle="dropdown"
+                        aria-expanded="false">
+                    Content Type
+                </button>
+                <form id="notification-followed-content-form">
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li>
+                            <input type="radio" class="btn-check" name="content_type"
+                                   id="notification-followed-question"
+                                   autocomplete="off" value="question"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-question">Question</label>
+                        </li>
+                        <li>
+                            <input type="radio" class="btn-check" name="content_type"
+                                   id="notification-followed-article"
+                                   autocomplete="off" value="article"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-article">Article</label>
+                        </li>
+                        <li>
+                            <input type="radio" class="btn-check" name="content_type"
+                                   id="notification-followed-course"
+                                   autocomplete="off" value="course"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-course">Course</label>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for content in contents %}
+        <div class="container mt-4">
+            <h4 class="mt-4 following-date">{{ content.created|date:"Y-m-d" }}</h4>
+            <div class="card no-shadow ms-3 mb-3">
+                <!-- content goes here -->
+                <div class="row align-items-center">
+                    {% if content.content_type_str == "answer" %}
+                        <!-- icon -->
+                        <div class="col-auto ps-0">
+                            <i class="fa-solid fa-circle-question fa-2xl"></i>
+                        </div>
+                        <div class="col ps-0">
+                            <!-- time -->
+                            <div class="row">
+                                <div class="col">
+                                    <i class="fa-solid fa-flag"></i> <span class="fw-light">{{ content.created|date:"H:i" }}</span>
+                                </div>
+                            </div>
+                            <!-- info -->
+                            <div class="row">
+                                <div class="col">
+                                    <span class="fw-light">Your followed Question <a class="fw-bold"
+                                                                                     href="{% url 'qa:question_detail' content.question.id %}">{{ content.question }}</a> has new answer</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif content.content_type_str == "article" %}
+                        <!-- icon -->
+                        <div class="col-auto ps-0">
+                            <i class="fa-solid fa-newspaper fa-2xl"></i>
+                        </div>
+                        <div class="col ps-0">
+                            <!-- time -->
+                            <div class="row">
+                                <div class="col">
+                                   <i class="fa-solid fa-flag"></i> <span
+                                        class="fw-light">{{ content.created|date:"H:i" }}</span>
+                                </div>
+                            </div>
+                            <!-- info -->
+                            <div class="row">
+                                <div class="col">
+                                    <span class="fw-light">Your followed Article <a
+                                            href="{% url 'pubedit:article_log' content.id %}">{{ content }}</a> has new updated log</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif content.content_type_str == "video" %}
+                        <!-- icon -->
+                        <div class="col-auto ps-0">
+                            <i class="fa-solid fa-building-flag fa-2xl"></i>
+                        </div>
+                        <div class="col ps-0">
+                            <!-- time -->
+                            <div class="row">
+                                <div class="col">
+                                    <i class="fa-solid fa-flag"></i> <span
+                                        class="fw-light">{{ content.created|date:"H:i" }}</span>
+                                </div>
+                            </div>
+                            <!-- info -->
+                            <div class="row">
+                                <div class="col">
+                                    <span class="fw-light">Your followed Course <span
+                                            class="fw-bold text-primary">{{ content.section.course }}</span> has new video uploaded <a
+                                            class="fw-bold"
+                                            href="{% url 'course:course_detial' content.section.course.id %}?video={{ content.id }}">{{ content }}</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script src="{% static "notification/js/following_date_remove.js" %}"></script>
+<script src="{% static "notification/js/initial_filter.js" %}"></script>
+<script>
+    initial_filter("notification-followed-content-form", "content_type");
+</script>
+

@@ -18,7 +18,7 @@ class Course(Content):
     followers = models.ManyToManyField(User, through='CourseFollower', related_name='followed_courses')
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created', '-updated']
 
     def __str__(self):
         return self.title

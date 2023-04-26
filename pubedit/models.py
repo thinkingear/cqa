@@ -31,7 +31,7 @@ class Article(Content):
             return latest_feed.feed
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created', '-updated']
 
 
 class ArticleFeed(Content):
@@ -53,6 +53,7 @@ class ArticleFollower(ContentFollower):
         constraints = [
             models.UniqueConstraint(fields=['follower', 'article'], name='article_follower')
         ]
+        ordering = ['-created']
 
 
 class ArticleTag(models.Model):

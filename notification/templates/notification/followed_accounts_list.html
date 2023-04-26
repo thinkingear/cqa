@@ -1,0 +1,64 @@
+{% load static %}
+
+<!-- Styles for removing card shadow -->
+<link rel="stylesheet" href="{% static 'notification/css/no_shadow.css' %}">
+<style>
+    .btn-no-uppercase {
+        text-transform: none !important;
+    }
+</style>
+
+
+<div class="card">
+    <div class="row card-header px-3 fs-3 fw-bold align-items-center">
+        <div class="col d-flex justify-content-start ">Followed Actions</div>
+        <div class="col d-flex justify-content-end me-3">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle btn-no-uppercase"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-mdb-toggle="dropdown"
+                        aria-expanded="false">
+                    Action Type
+                </button>
+
+
+
+                <form id="notification-followed-account-form">
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li>
+                            <input type="radio" class="btn-check" name="action_type"
+                                   id="notification-followed-post"
+                                   autocomplete="off" value="post"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-post">Post</label>
+                        </li>
+                        <li>
+                            <input type="radio" class="btn-check" name="action_type"
+                                   id="notification-followed-upvote"
+                                   autocomplete="off" value="upvote"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-upvote">Upvote</label>
+                        </li>
+                        <li>
+                            <input type="radio" class="btn-check" name="action_type"
+                                   id="notification-followed-follow"
+                                   autocomplete="off" value="follow"/>
+                            <label class="btn dropdown-item no-shadow btn-light" data-mdb-ripple-color="dark"
+                                   for="notification-followed-follow">Follow</label>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for followed_content in followed_content_list %}
+        {% include 'notification/action_content.html' with followed_content=followed_content action_type=action_type %}
+    {% endfor %}
+</div>
+
+<script src="{% static "notification/js/following_date_remove.js" %}"></script>
+<script src="{% static "notification/js/initial_filter.js" %}"></script>
+<script>
+    initial_filter("notification-followed-account-form", "action_type");
+</script>

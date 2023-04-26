@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const dateHeadings = document.querySelectorAll('.invitation-date');
+    const dateHeadings = document.querySelectorAll('.following-date');
     let previousDate = null;
 
     dateHeadings.forEach((dateHeading) => {

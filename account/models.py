@@ -38,6 +38,7 @@ class UserProfile(models.Model):
 class AccountFollower(models.Model):
     followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

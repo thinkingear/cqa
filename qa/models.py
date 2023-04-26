@@ -11,7 +11,7 @@ class Question(Content):
     tags = models.ManyToManyField(Tag, through='QuestionTag', related_name='tagged_questions')
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created', '-updated']
 
     def __str__(self):
         return self.title
@@ -28,7 +28,7 @@ class Answer(Content):
     views = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created', '-updated']
 
     def __str__(self):
         return self.feed[:50]
@@ -41,6 +41,7 @@ class AnswerFollower(ContentFollower):
         constraints = [
             models.UniqueConstraint(fields=['follower', 'answer'], name='answer_follower')
         ]
+        ordering = ['-created']
 
 
 class QuestionFollower(ContentFollower):

@@ -4,7 +4,7 @@
     {% load static %}
     <div class="card shadow-2-strong" style="border-radius: 1rem;">
         <div class="card-header">
-            {% include 'qa/question_card.html' with question=question %}
+            {% include 'qa/question_card.html' with question=question in_answer=True %}
         </div>
         <form class="card-body p-5 text-center"
               method="post" action="{% url 'qa:answer_create' question.id %}">

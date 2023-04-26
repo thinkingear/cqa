@@ -1,10 +1,11 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'notification/css/no_shadow.css' %}">
 <style>
     .custom-modal-width {
         max-width: 650px;
     }
 </style>
-<div class="card">
+<div class="card {% if in_answer %}no-shadow{% endif %}">
     <!-- tags -->
     {% include 'core/tags.html' with content=question %}
 

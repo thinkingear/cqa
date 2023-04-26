@@ -1,0 +1,54 @@
+<!-- params: action, content -->
+{% with followed=followed_content.0 followed_time=followed_content.1 content=followed_content.2 %}
+<div class="container mt-4">
+    <h4 class="mt-4 following-date">{{ followed_time|date:"Y-m-d" }}</h4>
+    <div class="card no-shadow ms-3 mb-3">
+        <!-- content goes here -->
+        <div class="row ms-3 align-items-center">
+            <!-- icon -->
+            <div class="col-auto ps-0">
+                {% if action_type == "post" %}
+                    <i class="fa-sharp fa-solid fa-paste fa-2xl"></i>
+                {% elif action_type == "upvote" %}
+                    <i class="fa-solid fa-check-to-slot fa-2xl"></i>
+                {% elif action_type == "follow" %}
+                    <i class="fa-solid fa-heart-circle-plus fa-2xl"></i>
+                {% endif %}
+            </div>
+            <div class="col ps-0">
+                <!-- time -->
+                <div class="row">
+                    <div class="col">
+                        <i class="fa-solid fa-flag"></i> <span class="fw-light">{{ followed_time|date:"H:i" }}</span>
+                    </div>
+                </div>
+                <!-- info -->
+                <div class="row">
+                    <div class="col">
+                        <span class="fw-light">Your followed Account <a class="fw-bold" href="{% url 'account:profile' followed.id %}">@{{ followed }}</a> has {% if action_type == "post" %}posted{% elif action_type == "upvote" %}upvoted{% elif action_type == "follow" %}followed{% endif %}
+                            {% if content.content_type_str == "question" %}
+                                a Question
+                                <a class="fw-bold" href="{% url 'qa:question_detail' content.id %}">{{ content }}</a>
+                            {% elif content.content_type_str == "answer" %}
+                                an answer for the Question
+                                <a class="fw-bold" href="{% url 'qa:question_detail' content.question.id %}">{{ content.question }}</a>
+                            {% elif content.content_type_str == "article" %}
+                                an Article
+                                <a class="fw-bold" href="{% url 'pubedit:article_log' content.id %}">{{ content }}</a>
+                            {% elif content.content_type_str == "course" %}
+                                a Course
+                                <a class="fw-bold" href="{% url 'course:course_detial' content.id %}">{{ content }}</a>
+                            {% elif content.content_type_str == "video" %}
+                                a Video
+                                <a class="fw-bold" href="{% url 'course:course_detial' content.section.course.id %}?video={{ content.id }}">{{ content }}</a>
+                                for the Course
+                                <a class="fw-bold" href="{% url 'course:course_detial' content.section.course.id %}">{{ content.section.course }}</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}

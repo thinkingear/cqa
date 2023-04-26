@@ -21,6 +21,16 @@
                                        id="notification-pulled-requests"
                                        autocomplete="off" value="pulled_requests"/>
                                 <label class="btn btn-info" for="notification-pulled-requests">Pulled requests</label>
+
+                                <input type="radio" class="btn-check" name="type"
+                                       id="notification-followed-contents"
+                                       autocomplete="off" value="followed_contents"/>
+                                <label class="btn btn-info" for="notification-followed-contents">Followed contents</label>
+
+                                <input type="radio" class="btn-check" name="type"
+                                       id="notification-followed-accounts"
+                                       autocomplete="off" value="followed_accounts"/>
+                                <label class="btn btn-info" for="notification-followed-accounts">Followed accounts</label>
                             </div>
                         </div>
                     </form>
@@ -33,9 +43,16 @@
             {% include "notification/question_invitations_list.html" %}
         {% elif notification_type == "pulled_requests" %}
             {% include "notification/pulled_requests_list.html" with combined_data=combined_data %}
+        {% elif notification_type == "followed_contents" %}
+            {% include "notification/followed_contents_list.html" with contents=contents content_type=content_type %}
+        {% elif notification_type == "followed_accounts" %}
+            {% include "notification/followed_accounts_list.html" with followed_content_list=followed_content_list action_type=action_type %}
         {% endif %}
         </div>
     </div>
 
-    <script src="{% static 'notification/js/notification_page.js' %}"></script>
+    <script src="{% static "notification/js/initial_filter.js" %}"></script>
+    <script>
+        initial_filter("notification-filter-form", "type");
+    </script>
 {% endblock %}

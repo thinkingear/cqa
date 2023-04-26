@@ -6,11 +6,12 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from account.models import User
 from notification.models import QuestionInvitation
-from qa.models import Question
-from pubedit.models import Article, ArticleFeed
+from qa.models import Question, QuestionFollower, AnswerFollower
+from pubedit.models import Article, ArticleFeed, ArticleFollower
 from pubedit.forms import ArticleForm, ArticleFeedForm
 from pubedit.views import compare_feeds
-import json
+from course.models import CourseFollower, VideoFollower
+from core.models import Vote
 
 # Create your views here.
 @csrf_exempt
@@ -33,7 +34,6 @@ def invite_question(request, question_id):
 def pull_request_article(request, article_id):
     article = Article.objects.get(id=article_id)
     if request.method == 'GET':
-        request.user.article_posted.all
         article_dict = model_to_dict(article)
         article_form = ArticleForm(article_dict)
 
@@ -103,6 +103,74 @@ def notification_page(request):
             pending_diff_htmls = [compare_feeds(pending_article_feed.feed, pending_article_feed.article.feed) for pending_article_feed in pending_article_feeds]
             combined_data = zip(pending_article_feeds, pending_diff_htmls)
             context["combined_data"] = combined_data
+        elif notification_type == "followed_contents":
+            content_type = request.GET.get("content_type", "")
+            context["content_type"] = content_type
+
+            if content_type == "question":
+                answers = []
+                for question_follower in QuestionFollower.objects.filter(follower=request.user):
+                    question = question_follower.question
+                    followed_time = question_follower.created
+                    for answer in question.answers.all():
+                        if answer.created > followed_time:
+                            answers.append(answer)
+
+                sorted_answers = sorted(answers, key=lambda answer: answer.created, reverse=True)
+                context["contents"] = sorted_answers
+
+            elif content_type == "article":
+                articles = []
+                for article_follower in ArticleFollower.objects.filter(follower=request.user):
+                    article = article_follower.article
+                    followed_time = article_follower.created
+                    if article.latest_article_feed.created > followed_time:
+                        articles.append(article)
+
+                sorted_articles = sorted(articles, key=lambda article: article.latest_article_feed.created, reverse=True)
+                context["contents"] = sorted_articles
+
+            elif content_type == "course":
+                videos = []
+                for course_follower in CourseFollower.objects.filter(follower=request.user):
+                    course = course_follower.course
+                    followed_time = course_follower.created
+                    for section in course.sections.all():
+                        for video in section.videos.all():
+                            if video.created > followed_time:
+                                videos.append(video)
+
+                sorted_videos = sorted(videos, key=lambda video: video.created, reverse=True)
+                context["contents"] = sorted_videos
+
+        elif notification_type == "followed_accounts":
+            action_type = request.GET.get("action_type", "")
+            context["action_type"] = action_type
+
+            # questoin, answer, article, course, video
+            followed_content_list = []
+            for relationship in request.user.followers.all():
+                followed = relationship.followed
+                followed_time = relationship.created
+
+                if action_type == "post":
+                    followed_content_list += [(followed, followed_time, question) for question in followed.question_posted.filter(created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, answer) for answer in followed.answer_posted.filter(created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, article) for article in followed.article_posted.filter(created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, course) for course in followed.course_posted.filter(created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, video) for video in followed.video_posted.filter(created__gt=followed_time)]
+                elif action_type == "upvote":
+                    followed_content_list += [(followed, followed_time, vote_content.content_object) for vote_content in Vote.objects.filter(updated__gt=followed_time)]
+                elif action_type == "follow":
+                    followed_content_list += [(followed, followed_time, question_follower.question) for question_follower in QuestionFollower.objects.filter(follower=followed, created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, answer_follower.answer) for answer_follower in AnswerFollower.objects.filter(follower=followed, created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, article_follower.article) for article_follower in ArticleFollower.objects.filter(follower=followed, created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, course_follower.course) for course_follower in CourseFollower.objects.filter(follower=followed, created__gt=followed_time)]
+                    followed_content_list += [(followed, followed_time, video_follower.video) for video_follower in VideoFollower.objects.filter(follower=followed, created__gt=followed_time)]
+
+            sorted_followed_content_list = sorted(followed_content_list, key=lambda followed_content: followed_content[2].created, reverse=True)
+            print(f"sorted_followed_content_list = {sorted_followed_content_list}")
+            context["followed_content_list"] = sorted_followed_content_list
 
         return render(request, 'notification/notification_page.html', context)
 
