@@ -16,7 +16,7 @@
 14. Public Edit
 15. Question Invitation
 16. Followed Content/Account Notification
-17. 优化问题推荐算法：
+17. 优化推荐算法：
 	1. 使用 Redis 缓存中间结果和最终结果；
 	2. 设置 Celery 定时任务来更新最终结果；
 	3. 根据用户过去登陆频率来动态调整任务调度周期长短；
