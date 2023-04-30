@@ -1,4 +1,4 @@
-### 已实现的功能
+### Features
 
 1. Account log in/sign in/log out
 2. Question, Answer and Article Create/Retrieve
@@ -16,11 +16,19 @@
 14. Public Edit
 15. Question Invitation
 16. Followed Content/Account Notification
+17. 优化问题推荐算法：
+	1. 使用 Redis 缓存中间结果和最终结果；
+	2. 设置 Celery 定时任务来更新最终结果；
+	3. 根据用户过去登陆频率来动态调整任务调度周期长短；
+	4. 执行任务时，实现 Map-Reduce 方法计算问题得分计算。
 
-### 尚未实现的功能
+### No Plan
 
-1. 通过结果缓存和定时任务来优化推荐系统性能
-2. Qustion, Answer, Article, Video 的删改
-3. Course 的查询的可见性
-4. 规格外可能考虑的功能：视频弹幕、内容审核、Merge Question、用户私信、历史记录
+1. Course display/block(visibility) when Retrieve
+2. Qustion, Answer, Article, Video UPDATE & DELETE
+3. Video-Danmaku
+4. Content Censorship
+5. Merge Question
+6. Private Messages
+7. History Viewed Retrieve
 

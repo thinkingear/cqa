@@ -192,3 +192,37 @@ AUTHENTICATION_BACKENDS = [
 
 
 LOGIN_URL = '/account/login/'
+
+# Redis settings
+REDIS_HOST = '192.168.60.142'
+REDIS_PORT = 6379
+
+# Celery settings
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_TIMEZONE = 'Asia/Shanghai'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+result_expires = 60
+
+# CELERY_RESULT_BACKEND = None
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+SESSION_COOKIE_AGE = 60 * 60 * 24  # 设置会话过期时间为 1 天
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 设置会话在浏览器关闭时过期
+
+
+# 设定更新推荐的最小周期和最大周期
+MIN_UPDATE_INTERVAL = 60  # 1 分钟
+MAX_UPDATE_INTERVAL = 86400  # 1 天
+

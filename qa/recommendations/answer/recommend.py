@@ -6,7 +6,7 @@ from qa.models import Answer, AnswerFollower, Question, QuestionFollower
 from core.models import Vote, ContentViewd
 from datetime import datetime
 from account.models import User, AccountFollower
-from qa.recommendations.question import get_question_all_id_similarity_df, get_top_n_question_similarity_series
+from qa.recommendations.question.recommend import get_question_all_similarity, get_top_n_question_similarity_series
 from core.recommendations.content import markdown_to_text
 
 
@@ -111,7 +111,7 @@ def get_answer_2_answer_score(answers):
 # 最终的 user_all_related_answers_df 需要包括 'user_id', 'answer_id', 'action', 'action_timestamp' 等字段
 def get_user_all_related_answers_df():
     user_all_related_answers_data = []
-    question_all_id_similarity_df = get_question_all_id_similarity_df()
+    question_all_id_similarity_df = get_question_all_similarity()
 
     for user in User.objects.all():
         # vote

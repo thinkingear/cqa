@@ -1,6 +1,7 @@
 import json
 from django.conf import settings
 from django.db.models import Q
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from account.forms import RegistrationForm, LoginForm
 from django.shortcuts import redirect, render, reverse
@@ -9,9 +10,8 @@ from django.contrib.auth import login, logout
 from .backends import EmailBackend
 from .models import AccountFollower
 from django.http import JsonResponse
-from django.templatetags.static import static
-from notification.models import QuestionInvitation
-from qa.models import Question
+from qa.recommendations.question.recommend import start_question_recommendation_for_user_task
+
 
 def register_page(request):
     if request.method == 'POST':
@@ -24,7 +24,6 @@ def register_page(request):
             user.password = user.password.strip()
             user.username = user.username.strip()
             user.save()
-
             UserProfile.objects.create(
                 user=user,
                 bio='Add profile bio',
@@ -32,6 +31,9 @@ def register_page(request):
             )
 
             login(request, user, backend=settings.EMAIL_BACKEND_PATH)
+
+            start_question_recommendation_for_user_task(user)
+
             return redirect('core:home')
         else:
             # register: form is not valid
@@ -58,7 +60,11 @@ def login_page(request):
 
             if user is not None:
                 print('login: authentication success')
+                user.login_frequency = timezone.now() - user.last_login
                 login(request, user, backend=settings.EMAIL_BACKEND_PATH)
+
+                start_question_recommendation_for_user_task(user)
+
                 return redirect('core:home')
             else:
                 print('login: authentication failed')

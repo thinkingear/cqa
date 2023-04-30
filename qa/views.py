@@ -8,7 +8,7 @@ import openai
 from django.conf import settings
 from django.http import JsonResponse
 import json
-
+from qa.recommendations.question.recommend import update_question_all_id_similarity_df
 # Create your views here.
 
 
@@ -23,6 +23,9 @@ def question_create_page(request):
             title=title,
             poster=request.user,
         )
+
+        update_question_all_id_similarity_df()
+
         return redirect('core:home')
 
     return render(request, 'qa/question_create.html')
