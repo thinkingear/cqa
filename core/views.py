@@ -1,6 +1,6 @@
 from qa.recommendations.question.recommend import get_recommend_questions_for_user
-from qa.recommendations.answer.recommend import get_top_n_recommend_answers_for_user
-from pubedit.recommendations.article.recommend import get_top_n_recommend_articles_for_user
+from qa.recommendations.answer.recommend import get_recommend_answers_for_user
+from pubedit.recommendations.article.recommend import get_recommend_articles_for_user
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, redirect, reverse
 from django.db.models import Q
@@ -124,7 +124,7 @@ def search_page(request):
             )
     elif content_type == 'article':
         if request.user.is_authenticated and sorted_by == 'recommend':
-            contents += get_top_n_recommend_articles_for_user(request.user)
+            contents += get_recommend_articles_for_user(request.user)
         else:
             # 创建一个子查询，以获取每个文章的最新 ArticleFeed
             latest_feeds = ArticleFeed.objects.filter(
@@ -148,7 +148,7 @@ def search_page(request):
 
     elif content_type == 'answer':
         if request.user.is_authenticated and sorted_by == 'recommend':
-            contents += get_top_n_recommend_answers_for_user(request.user)
+            contents += get_recommend_answers_for_user(request.user)
         else:
             contents += Answer.objects.filter(
                 Q(poster__username__icontains=q) |

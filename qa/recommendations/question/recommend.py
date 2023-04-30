@@ -1,4 +1,3 @@
-import math
 from celery import group, chord
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -7,7 +6,6 @@ from qa.models import Question, QuestionFollower
 from core.models import Vote, ContentViewd
 from account.models import User, AccountFollower
 from django.core.cache import cache
-import os
 import numpy as np
 from datetime import datetime
 import json
@@ -15,7 +13,8 @@ import celery
 from celery import shared_task
 from celery.result import AsyncResult
 from dateutil.parser import parse
-
+from core.utils import partition_df
+from cqa.settings import NUM_CORES
 
 
 def get_question_text(question):
@@ -23,7 +22,7 @@ def get_question_text(question):
 
 
 """
-获取系统中所有问题文本之间的相似度 DataFrame
+更新系统中所有问题文本之间的相似度 DataFrame
 """
 def update_question_all_id_similarity_df():
     # TF-IDF和相似度计算相关的代码
@@ -81,14 +80,14 @@ WEIGHTS = {
 def get_user_related_questions_df(user_id):
     user = User.objects.get(id=user_id)
 
-    user_all_related_questions_data = []
+    user_related_questions_data = []
 
     # vote
     for vote in Vote.objects.filter(content_type__model='question', voter=user):
         votes = vote.vote
         if votes == 0:
             continue
-        user_all_related_questions_data.append({
+        user_related_questions_data.append({
             'user_id': user.id,
             'question_id': vote.content_object.id,
             'action': 'positive_vote' if votes == 1 else 'negative_vote',
@@ -98,7 +97,7 @@ def get_user_related_questions_df(user_id):
     # view
     recently_created_viewed_records = ContentViewd.objects.filter(user=user, content_type__model='question').order_by('-created')
     for recently_created_viewed_record in recently_created_viewed_records:
-        user_all_related_questions_data.append({
+        user_related_questions_data.append({
             'user_id': user.id,
             'question_id': recently_created_viewed_record.content_object.id,
             'action': 'view',
@@ -107,7 +106,7 @@ def get_user_related_questions_df(user_id):
 
     # post
     for question in user.question_posted.all():
-        user_all_related_questions_data.append({
+        user_related_questions_data.append({
             'user_id': user.id,
             'question_id': question.id,
             'action': 'post',
@@ -116,7 +115,7 @@ def get_user_related_questions_df(user_id):
 
     # follow
     for question_follower in QuestionFollower.objects.filter(follower=user):
-        user_all_related_questions_data.append({
+        user_related_questions_data.append({
             'user_id': user.id,
             'question_id': question_follower.question.id,
             'action': 'follow',
@@ -133,7 +132,7 @@ def get_user_related_questions_df(user_id):
             votes = vote.vote
             if votes == 0:
                 continue
-            user_all_related_questions_data.append({
+            user_related_questions_data.append({
                 'user_id': user.id,
                 'question_id': vote.content_object.id,
                 'action': 'followed_user_positive_vote' if votes == 1 else 'followed_user_negative_vote',
@@ -142,7 +141,7 @@ def get_user_related_questions_df(user_id):
 
         # followed_user_follow
         for question_follower in QuestionFollower.objects.filter(follower=followed_user):
-            user_all_related_questions_data.append({
+            user_related_questions_data.append({
                 'user_id': user.id,
                 'question_id': question_follower.question.id,
                 'action': 'followed_user_follow',
@@ -152,7 +151,7 @@ def get_user_related_questions_df(user_id):
         # followed_user_view
         recently_created_viewed_record = ContentViewd.objects.filter(user=followed_user, content_type__model='question').order_by('-created').first()
         if recently_created_viewed_record is not None:
-            user_all_related_questions_data.append({
+            user_related_questions_data.append({
                 'user_id': user.id,
                 'question_id': recently_created_viewed_record.content_object.id,
                 'action': 'followed_user_view',
@@ -161,22 +160,24 @@ def get_user_related_questions_df(user_id):
 
         # followed_user_post
         for question in followed_user.question_posted.all():
-            user_all_related_questions_data.append({
+            user_related_questions_data.append({
                 'user_id': user.id,
                 'question_id': question.id,
                 'action': 'followed_user_post',
                 'action_timestamp': question.created,
             })
 
-    user_all_related_questions_df = pd.DataFrame(user_all_related_questions_data)
+    user_related_questions_df = pd.DataFrame(user_related_questions_data)
 
-    return user_all_related_questions_df
+    return user_related_questions_df
 
 
 """
 获取与输入问题文本相比，前 top_n 个最相似的问题
 """
-def get_top_n_question_similarity_series(question_id, question_all_similarity_df, top_n=5):
+def get_top_n_question_similarity_series(question_id, top_n=5):
+    question_all_similarity_df = get_question_all_similarity()
+
     # 获取给定问题的相似度数据
     question_similarity_series = question_all_similarity_df[question_id]
 
@@ -189,7 +190,6 @@ def get_top_n_question_similarity_series(question_id, question_all_similarity_df
 
 @shared_task
 def map_task(dict_partition, user_viewd_question_ids_list):
-    question_all_similarity_df = get_question_all_similarity()
     df_partition = pd.DataFrame(dict_partition)
     user_viewd_question_ids = set(user_viewd_question_ids_list)
 
@@ -202,7 +202,7 @@ def map_task(dict_partition, user_viewd_question_ids_list):
 
         time_decay = 1 / (1 + np.log1p((datetime.now(action_timestamp.tzinfo) - action_timestamp).days))
 
-        cur_text_similar_questions = get_top_n_question_similarity_series(question_id, question_all_similarity_df)
+        cur_text_similar_questions = get_top_n_question_similarity_series(question_id)
 
         for cur_text_similar_question_id, similarity in cur_text_similar_questions.items():
             if cur_text_similar_question_id not in user_viewd_question_ids:
@@ -210,8 +210,6 @@ def map_task(dict_partition, user_viewd_question_ids_list):
                     partition_recommend_result[cur_text_similar_question_id] = 0
                 partition_recommend_result[cur_text_similar_question_id] += similarity * time_decay * weight
 
-    # print(f"|-------------- Map function success ----------------|")
-    # print(f"{partition_recommend_result}")
     return partition_recommend_result
 
 
@@ -224,9 +222,6 @@ def reduce_task(map_results, user_id, top_n):
                 combined_results[question_id] = 0
             combined_results[question_id] += score
 
-    # print(f"|--------------reduce result: ---------------|")
-    # print(f"{combined_results}")
-
     sorted_results = sorted(combined_results.items(), key=lambda x: x[1], reverse=True)
 
     # 将 ID 转换为 Question 实例并返回推荐得分最高的前 top_n 个问题
@@ -234,22 +229,6 @@ def reduce_task(map_results, user_id, top_n):
 
     # 将结果缓存
     cache.set(f'user_{user_id}_questions_recommendation_json', json.dumps(recommended_question_ids), timeout=None)
-
-
-"""
-将完整的 dataframe 分割成若干个 partition，以便 MapReduce
-"""
-def partition_df(df, num_partitions):
-    min_partition_size = 16
-    partition_size = max(math.ceil(len(df) / num_partitions), min_partition_size)
-
-    partitions = []
-    for i in range(0, len(df), partition_size):
-        partitions.append(df[i * partition_size:(i + 1) * partition_size])
-
-    return partitions
-
-
 
 
 """
@@ -267,11 +246,8 @@ def _update_questions_recommendation_for_user(user_id, top_n):
                                   ['question_id']
                                   )
 
-    # 获取 CPU 核心数
-    num_cores = os.cpu_count()
-
     # 将 user_related_questions_df 划分为与 CPU 核心数相等的份数
-    df_partitions = partition_df(user_related_questions_df, num_cores)
+    df_partitions = partition_df(user_related_questions_df, NUM_CORES)
     # celery 需要将 dataframe 转化成 json 格式
     dict_partitions = [partition.to_dict(orient='records') for partition in df_partitions]
     # 同样，celery 也不允许 set 类型，需要转化成 list 类型
@@ -311,10 +287,11 @@ def get_question_all_similarity():
 """
 def start_question_recommendation_for_user_task(user, top_n=50):
     # 获取现有任务的ID
-    # print(f"|-----------start_question_recommendation_for_user_task-----------|")
-
     user_2_question_task_ids_json = cache.get('user_questions_recommendation_task_ids_json')
-    user_2_question_task_ids = json.loads(user_2_question_task_ids_json)
+    if user_2_question_task_ids_json is None:
+        user_2_question_task_ids = {}
+    else:
+        user_2_question_task_ids = json.loads(user_2_question_task_ids_json)
     question_task_id = user_2_question_task_ids[user.id] if user.id in user_2_question_task_ids else None
 
     # 如果存在现有任务ID，取消该任务
@@ -328,8 +305,10 @@ def start_question_recommendation_for_user_task(user, top_n=50):
             # 等待任务完成，3 秒之后还没完成直接报错
             question_task_result.get(timeout=3)
 
+    # 异步的 MapReduce 地更新 user 的所有被推荐的问题
+    _update_questions_recommendation_for_user(user.id, top_n)
+
     # 调度新任务
-    # print(f"|-----------update_questions_recommendation_for_user.apply_async(args=(user.id = {user.id}, top_n), countdown={user.update_interval})-----------|")
     new_question_task = update_questions_recommendation_for_user.apply_async(args=(user.id, top_n), countdown=user.update_interval)
 
     # 存储新任务的ID到 Redis 散列中
@@ -339,8 +318,6 @@ def start_question_recommendation_for_user_task(user, top_n=50):
 
 @shared_task
 def update_questions_recommendation_for_user(user_id, top_n=50):
-    # print(f"|-----------{timezone.now()}: task(user_id = {user_id}) executing...-----------|")
-
     # 计算并缓存 questions_recommendation_for_user
     user = User.objects.get(id=user_id)
 
@@ -348,6 +325,5 @@ def update_questions_recommendation_for_user(user_id, top_n=50):
     _update_questions_recommendation_for_user(user.id, top_n)
 
     # 重新调度任务
-    # print(f"|-----------update_questions_recommendation_for_user.apply_async(args=(user.id = {user_id}, top_n), countdown={user.update_interval})-----------|")
     update_questions_recommendation_for_user.apply_async(args=(user_id, top_n), countdown=user.update_interval)
 

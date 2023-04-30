@@ -226,3 +226,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 设置会话在浏览器关闭时过�
 MIN_UPDATE_INTERVAL = 60  # 1 分钟
 MAX_UPDATE_INTERVAL = 86400  # 1 天
 
+MIN_PARTITION_SIZE = 16
+
+# 获取 CPU 核心数
+NUM_CORES = os.cpu_count()
+

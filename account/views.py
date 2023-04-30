@@ -4,13 +4,15 @@ from django.db.models import Q
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from account.forms import RegistrationForm, LoginForm
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import redirect, render
 from account.models import User, UserProfile
 from django.contrib.auth import login, logout
 from .backends import EmailBackend
 from .models import AccountFollower
 from django.http import JsonResponse
 from qa.recommendations.question.recommend import start_question_recommendation_for_user_task
+from qa.recommendations.answer.recommend import start_answer_recommendation_for_user_task
+from pubedit.recommendations.article.recommend import start_article_recommendation_for_user_task
 
 
 def register_page(request):
@@ -33,6 +35,8 @@ def register_page(request):
             login(request, user, backend=settings.EMAIL_BACKEND_PATH)
 
             start_question_recommendation_for_user_task(user)
+            start_answer_recommendation_for_user_task(user)
+            start_article_recommendation_for_user_task(user)
 
             return redirect('core:home')
         else:
@@ -59,11 +63,12 @@ def login_page(request):
             user = EmailBackend.authenticate(request, email=email, password=password)
 
             if user is not None:
-                print('login: authentication success')
                 user.login_frequency = timezone.now() - user.last_login
                 login(request, user, backend=settings.EMAIL_BACKEND_PATH)
 
                 start_question_recommendation_for_user_task(user)
+                start_answer_recommendation_for_user_task(user)
+                start_article_recommendation_for_user_task(user)
 
                 return redirect('core:home')
             else:

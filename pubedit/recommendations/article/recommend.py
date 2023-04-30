@@ -1,20 +1,33 @@
-import numpy as np
+from pubedit.models import Article, ArticleFollower
+from core.recommendations.content import markdown_to_text
+
+from celery import group, chord
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
-from pubedit.models import Article, ArticleFollower
+from qa.models import Question, QuestionFollower
 from core.models import Vote, ContentViewd
-from datetime import datetime
 from account.models import User, AccountFollower
-from core.recommendations.content import markdown_to_text
+from django.core.cache import cache
+import numpy as np
+from datetime import datetime
+import json
+import celery
+from celery import shared_task
+from celery.result import AsyncResult
+from dateutil.parser import parse
+from core.utils import partition_df
+from cqa.settings import NUM_CORES
 
 
 def get_article_text(article):
     return article.title + ' ' + ','.join([tag.name for tag in article.tags.all()]) + ' ' + markdown_to_text(article.feed)
 
 
-# 获取系统中所有问题文本之间的相似度 DataFrame
-def get_article_all_id_similarity_df():
+"""
+更新系统中所有文章文本之间的相似度 DataFrame
+"""
+def update_article_all_id_similarity_df():
     # TF-IDF和相似度计算相关的代码
     article_all = Article.objects.all()
     # [{'title': 'How to learn Django?', 'tags': 'cs,django,python'}]
@@ -38,9 +51,15 @@ def get_article_all_id_similarity_df():
     # article_all_df['id'] 返回的是一个 pandas Series 对象，其中存有所有数据行在 'article_id' 字段上的值
     article_all_similarity_df = pd.DataFrame(article_all_text_similarity_matrix, index=article_all_df['article_id'], columns=article_all_df['article_id'])
 
-    return article_all_similarity_df
+    # 将 DataFrame 转换成 JSON 格式
+    article_all_similarity_json = article_all_similarity_df.to_json()
 
+    # 存储 JSON 数据到缓存
+    cache.set('article_all_similarity_json', article_all_similarity_json, timeout=None)
 
+"""
+用户行为权重
+"""
 WEIGHTS = {
     'positive_vote': 40,
     'negative_vote': -40,
@@ -55,97 +74,98 @@ WEIGHTS = {
     'followed_user_post': 10,
 }
 
-
-# 获取系统中所有用户与之相关的问题
-# 最终的 user_all_related_articles_df 需要包括 'user_id', 'article_id', 'action', 'action_timestamp' 等字段
-def get_user_all_related_articles_df():
+"""
+获取系统中所有用户与之相关的问题
+最终的 user_all_related_articles_df 需要包括 'user_id', 'article_id', 'action', 'action_timestamp' 等字段
+"""
+def get_user_related_articles_df(user_id):
+    user = User.objects.get(id=user_id)
     user_all_related_articles_data = []
 
-    for user in User.objects.all():
-        # vote
-        for vote in Vote.objects.filter(content_type__model='article', voter=user):
+    # vote
+    for vote in Vote.objects.filter(content_type__model='article', voter=user):
+        votes = vote.vote
+        if votes == 0:
+            continue
+        user_all_related_articles_data.append({
+            'user_id': user.id,
+            'article_id': vote.content_object.id,
+            'action': 'positive_vote' if votes == 1 else 'negative_vote',
+            'action_timestamp': vote.updated
+        })
+
+    # view
+    recently_created_viewed_record = ContentViewd.objects.filter(user=user, content_type__model='article').order_by('-created').first()
+    if recently_created_viewed_record is not None:
+        user_all_related_articles_data.append({
+            'user_id': user.id,
+            'article_id': recently_created_viewed_record.content_object.id,
+            'action': 'view',
+            'action_timestamp': recently_created_viewed_record.created,
+        })
+
+    # post
+    for article in user.article_posted.all():
+        user_all_related_articles_data.append({
+            'user_id': user.id,
+            'article_id': article.id,
+            'action': 'post',
+            'action_timestamp': article.created,
+        })
+
+    # follow
+    for article_follower in ArticleFollower.objects.filter(follower=user):
+        user_all_related_articles_data.append({
+            'user_id': user.id,
+            'article_id': article_follower.article.id,
+            'action': 'follow',
+            'action_timestamp': article_follower.created,
+        })
+
+    # followed_user
+
+    for account_follower in AccountFollower.objects.filter(follower=user):
+        followed_user = account_follower.followed
+        # followed_user_positive_vote
+        # followed_user_negative_vote
+        for vote in Vote.objects.filter(content_type__model='article', voter=followed_user):
             votes = vote.vote
             if votes == 0:
                 continue
             user_all_related_articles_data.append({
                 'user_id': user.id,
                 'article_id': vote.content_object.id,
-                'action': 'positive_vote' if votes == 1 else 'negative_vote',
+                'action': 'followed_user_positive_vote' if votes == 1 else 'followed_user_negative_vote',
                 'action_timestamp': vote.updated
             })
 
-        # view
-        recently_created_viewed_record = ContentViewd.objects.filter(user=user, content_type__model='article').order_by('-created').first()
+        # followed_user_follow
+        for article_follower in ArticleFollower.objects.filter(follower=followed_user):
+            user_all_related_articles_data.append({
+                'user_id': user.id,
+                'article_id': article_follower.article.id,
+                'action': 'followed_user_follow',
+                'action_timestamp': article_follower.created,
+            })
+
+        # followed_user_view
+        recently_created_viewed_record = ContentViewd.objects.filter(user=followed_user, content_type__model='article').order_by('-created').first()
         if recently_created_viewed_record is not None:
             user_all_related_articles_data.append({
                 'user_id': user.id,
                 'article_id': recently_created_viewed_record.content_object.id,
-                'action': 'view',
+                'action': 'followed_user_view',
                 'action_timestamp': recently_created_viewed_record.created,
             })
 
-        # post
-        for article in user.article_posted.all():
+        # followed_user_post
+        for article in followed_user.article_posted.all():
             user_all_related_articles_data.append({
                 'user_id': user.id,
                 'article_id': article.id,
-                'action': 'post',
+                'action': 'followed_user_post',
                 'action_timestamp': article.created,
             })
-
-        # follow
-        for article_follower in ArticleFollower.objects.filter(follower=user):
-            user_all_related_articles_data.append({
-                'user_id': user.id,
-                'article_id': article_follower.article.id,
-                'action': 'follow',
-                'action_timestamp': article_follower.created,
-            })
-
-        # followed_user
-
-        for account_follower in AccountFollower.objects.filter(follower=user):
-            followed_user = account_follower.followed
-            # followed_user_positive_vote
-            # followed_user_negative_vote
-            for vote in Vote.objects.filter(content_type__model='article', voter=followed_user):
-                votes = vote.vote
-                if votes == 0:
-                    continue
-                user_all_related_articles_data.append({
-                    'user_id': user.id,
-                    'article_id': vote.content_object.id,
-                    'action': 'followed_user_positive_vote' if votes == 1 else 'followed_user_negative_vote',
-                    'action_timestamp': vote.updated
-                })
-
-            # followed_user_follow
-            for article_follower in ArticleFollower.objects.filter(follower=followed_user):
-                user_all_related_articles_data.append({
-                    'user_id': user.id,
-                    'article_id': article_follower.article.id,
-                    'action': 'followed_user_follow',
-                    'action_timestamp': article_follower.created,
-                })
-
-            # followed_user_view
-            recently_created_viewed_record = ContentViewd.objects.filter(user=followed_user, content_type__model='article').order_by('-created').first()
-            if recently_created_viewed_record is not None:
-                user_all_related_articles_data.append({
-                    'user_id': user.id,
-                    'article_id': recently_created_viewed_record.content_object.id,
-                    'action': 'followed_user_view',
-                    'action_timestamp': recently_created_viewed_record.created,
-                })
-
-            # followed_user_post
-            for article in followed_user.article_posted.all():
-                user_all_related_articles_data.append({
-                    'user_id': user.id,
-                    'article_id': article.id,
-                    'action': 'followed_user_post',
-                    'action_timestamp': article.created,
-                })
 
     user_all_related_articles_df = pd.DataFrame(user_all_related_articles_data)
 
@@ -153,7 +173,10 @@ def get_user_all_related_articles_df():
 
 
 # 获取与输入问题文本相比，前 top_n 个最相似的问题
-def get_top_n_article_similarity_series(article_id, article_all_similarity_df, top_n=5):
+def get_top_n_article_similarity_series(article_id, top_n=5):
+    article_all_similarity_df = get_article_all_similarity()
+
+
     # 获取给定问题的相似度数据
     article_similarity_series = article_all_similarity_df[article_id]
 
@@ -164,56 +187,144 @@ def get_top_n_article_similarity_series(article_id, article_all_similarity_df, t
     return sorted_article_similarity_series[:top_n]
 
 
-def recommend_articles_for_user(user_id, article_all_similarity_df, user_all_related_articles_df, top_n):
-    user_related_articles_series = user_all_related_articles_df[user_all_related_articles_df['user_id'] == user_id]
+@shared_task
+def map_task(dict_partition, user_viewd_article_ids_list):
+    df_partition = pd.DataFrame(dict_partition)
+    user_viewd_article_ids = set(user_viewd_article_ids_list)
 
-    user_viewd_article_ids = set(user_related_articles_series
-                                     [(user_related_articles_series['action'] == 'follow') |
-                                      (user_related_articles_series['action'] == 'positive_vote') |
-                                      (user_related_articles_series['action'] == 'negative_vote') |
-                                      (user_related_articles_series['action'] == 'view') |
-                                      (user_related_articles_series['action'] == 'post')]
-                                      ['article_id']
-                                     )
-    # 推荐问题结果集
-    recommend_result = {}
-
-    for idx, row in user_related_articles_series.iterrows():
+    partition_recommend_result = {}
+    for _, row in df_partition.iterrows():
         article_id = row['article_id']
         action = row['action']
-        action_timestamp = row['action_timestamp']
+        action_timestamp = parse(row['action_timestamp'])
         weight = WEIGHTS[action]
 
         time_decay = 1 / (1 + np.log1p((datetime.now(action_timestamp.tzinfo) - action_timestamp).days))
 
-        cur_text_similar_articles = get_top_n_article_similarity_series(article_id, article_all_similarity_df)
+        cur_text_similar_articles = get_top_n_article_similarity_series(article_id)
 
         for cur_text_similar_article_id, similarity in cur_text_similar_articles.items():
-            # once the article are in the user_viewd_article_ids,
-            # this article won't be recommned to user
             if cur_text_similar_article_id not in user_viewd_article_ids:
-                article_instance = Article.objects.get(id=cur_text_similar_article_id)
-                if article_instance not in recommend_result:
-                    recommend_result[article_instance] = 0
-                recommend_result[article_instance] += similarity * time_decay * weight
+                if cur_text_similar_article_id not in partition_recommend_result:
+                    partition_recommend_result[cur_text_similar_article_id] = 0
+                partition_recommend_result[cur_text_similar_article_id] += similarity * time_decay * weight
 
-        # 按推荐得分降序排序
-        sorted_recommend_result = sorted(recommend_result.items(), key=lambda x: x[1], reverse=True)
-
-        # 返回推荐得分最高的前 top_n 个问题
-        return sorted_recommend_result[:top_n]
+    return partition_recommend_result
 
 
-def get_top_n_recommend_articles_for_user(user, top_n=50):
-    article_all_similarity_df = get_article_all_id_similarity_df()
-    user_all_related_articles_df = get_user_all_related_articles_df()
+@shared_task
+def reduce_task(map_results, user_id, top_n):
+    combined_results = {}
+    for result in map_results:
+        for article_id, score in result.items():
+            if article_id not in combined_results:
+                combined_results[article_id] = 0
+            combined_results[article_id] += score
 
-    print(f"article_all_similarity_df = \n{article_all_similarity_df}\n")
-    print(f"user_all_related_articles_df = \n{user_all_related_articles_df}\n")
+    sorted_results = sorted(combined_results.items(), key=lambda x: x[1], reverse=True)
 
-    recommended_articles = recommend_articles_for_user(user.id, article_all_similarity_df, user_all_related_articles_df, top_n=top_n)
+    # 将 ID 转换为 Article 实例并返回推荐得分最高的前 top_n 个问题
+    recommended_article_ids = [article_id for article_id, score in sorted_results[:top_n]]
 
-    if recommended_articles is not None:
-        return [item[0] for item in recommended_articles]
+    # 将结果缓存
+    cache.set(f'user_{user_id}_articles_recommendation_json', json.dumps(recommended_article_ids), timeout=None)
+
+
+"""
+执行 MapReduce
+"""
+def _update_articles_recommendation_for_user(user_id, top_n):
+    user_related_articles_df = get_user_related_articles_df(user_id)
+
+    user_viewd_article_ids = set(user_related_articles_df
+                                  [(user_related_articles_df['action'] == 'follow') |
+                                   (user_related_articles_df['action'] == 'positive_vote') |
+                                   (user_related_articles_df['action'] == 'negative_vote') |
+                                   (user_related_articles_df['action'] == 'view') |
+                                   (user_related_articles_df['action'] == 'post')]
+                                  ['article_id']
+                                  )
+
+    # 将 user_related_questions_df 划分为与 CPU 核心数相等的份数
+    df_partitions = partition_df(user_related_articles_df, NUM_CORES)
+    # celery 需要将 dataframe 转化成 json 格式
+    dict_partitions = [partition.to_dict(orient='records') for partition in df_partitions]
+    # 同样，celery 也不允许 set 类型，需要转化成 list 类型
+    user_viewed_article_ids_list = list(user_viewd_article_ids)
+
+    map_tasks = [map_task.s(dict_partition, user_viewed_article_ids_list) for dict_partition in dict_partitions]
+    chord(group(*map_tasks))(reduce_task.s(user_id, top_n))
+
+
+"""
+从 redis 缓存中获取 user 的推荐文章
+"""
+def get_recommend_articles_for_user(user):
+    # 获取缓存数据
+    recommended_article_ids_json = cache.get(f'user_{user.id}_articles_recommendation_json')
+    # 将 JSON 数据转换回列表
+    recommended_article_ids = json.loads(recommended_article_ids_json)
+
+    return Article.objects.filter(id__in=recommended_article_ids)
+
+
+
+"""
+从 redis 缓存中获取 article_all_similarity
+"""
+def get_article_all_similarity():
+    # 从缓存中获取 JSON 数据
+    article_all_similarity_json = cache.get('article_all_similarity_json')
+    # 将 JSON 数据转换回 DataFrame
+    article_all_similarity_df = pd.read_json(article_all_similarity_json)
+
+    return article_all_similarity_df
+
+
+"""
+创建一个新的 recommended articles for user task '周期'任务：update_articles_recommendation_for_user
+"""
+def start_article_recommendation_for_user_task(user, top_n=50):
+    # 获取现有任务的ID
+    user_2_article_task_ids_json = cache.get('user_articles_recommendation_task_ids_json')
+    if user_2_article_task_ids_json is None:
+        user_2_article_task_ids = {}
     else:
-        return []
+        user_2_article_task_ids = json.loads(user_2_article_task_ids_json)
+
+    article_task_id = user_2_article_task_ids[user.id] if user.id in user_2_article_task_ids else None
+
+    # 如果存在现有任务ID，取消该任务
+    if article_task_id:
+        # 获取任务的结果对象
+        article_task_result = AsyncResult(article_task_id)
+
+        if article_task_result.state in ('PENDING', 'RETRY'):
+            celery.current_app.control.revoke(article_task_id, terminate=True)
+        elif article_task_result.state == 'STARTED':
+            # 等待任务完成，3 秒之后还没完成直接报错
+            article_task_result.get(timeout=3)
+
+
+    # 异步的 MapReduce 地更新 user 的所有被推荐的问题
+    _update_articles_recommendation_for_user(user.id, top_n)
+
+    # 调度新任务
+    new_article_task = update_articles_recommendation_for_user.apply_async(args=(user.id, top_n), countdown=user.update_interval)
+
+    # 存储新任务的ID到 Redis 散列中
+    user_2_article_task_ids[user.id] = new_article_task.id
+    cache.set('user_articles_recommendation_task_ids_json', json.dumps(user_2_article_task_ids), timeout=None)
+
+
+@shared_task
+def update_articles_recommendation_for_user(user_id, top_n=50):
+    # 计算并缓存 questions_recommendation_for_user
+    user = User.objects.get(id=user_id)
+
+    # 异步的 MapReduce 地更新 user 的所有被推荐的问题
+    _update_articles_recommendation_for_user(user.id, top_n)
+
+    # 重新调度任务
+    update_articles_recommendation_for_user.apply_async(args=(user_id, top_n), countdown=user.update_interval)
+

@@ -5,6 +5,7 @@ from .forms import ArticleForm, ArticleFeedForm
 from .models import Article, ArticleTag
 from core.views import content_follow, tags_handler
 from django.views.decorators.csrf import csrf_exempt
+from pubedit.recommendations.article.recommend import update_article_all_id_similarity_df
 
 # Create your views here.
 
@@ -24,6 +25,8 @@ def article_create_page(request):
         article_feed.is_initial = True
         article_feed.poster = request.user
         article_feed.save()
+
+        update_article_all_id_similarity_df()
 
         return redirect('core:home')
 

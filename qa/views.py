@@ -9,6 +9,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import json
 from qa.recommendations.question.recommend import update_question_all_id_similarity_df
+from qa.recommendations.answer.recommend import update_answer_all_id_similarity_df
 # Create your views here.
 
 
@@ -40,6 +41,9 @@ def answer_create_page(request, pk):
         answer.question = question
         answer.poster = request.user
         answer.save()
+
+        update_answer_all_id_similarity_df()
+
         return redirect('core:home')
 
     form = AnswerForm()
